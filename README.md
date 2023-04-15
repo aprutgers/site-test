@@ -32,17 +32,18 @@ After check out run
 ```
 mkdir countrycache
 mkdir psi
+sudo mkdir -p /mnt/tmp
 ```
-
 - countrycache - stores proxy IP country
 - psi - stores state of running psi tunnels
+- /mnt/tmp - see below
 
 ### start / stop
 - start with start.sh (has counter for number of runners, relates do domains, max=19)
 - stop with stop.sh
 - restart with restart.sh
 
-Logging in [/mnt]/tmp - see ramdisk below
+logging is sent and rotated to [/mnt]/tmp - see ramdisk below
 
 ### stats
 ./collect_stats.sh
@@ -86,4 +87,3 @@ Alternative just run:
 ```
 mount -t tmpfs -o size=$cap tmpfs /mnt/tmp
 ```
-	
