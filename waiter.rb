@@ -36,27 +36,25 @@ end
 # see domains to see for what instance per domain we check 1,7,11 now
 #
 def reduce_current_min_max_delay
-  if ($instance < "20")
-     log "reduce_current_min_max_delay for instance #{$instance}"
-     rand = Random.rand(1...1000)
-     if (rand < 700) # 70% - period to decrease sleeps faster, with larger random steps
-        log "reduce_current_min_max_delay: actual reducing"
-        reduce= Random.rand(15)
-        delay = IO.readlines("#{$domain}/delay")
-        min=delay[0].to_i
-        max=delay[1].to_i
-        min=min-reduce
-        max=max-reduce
-        if (min < 2)
-           min = 10
-        end
-        if (max < 11)
-           max = 20
-        end
-        log "reduce_current_min_max_delay new min #{min} new max #{max}"
-        File.open("#{$domain}/delay", "w") { |f| f.write "#{min}\n#{max}\n" }
+  log "reduce_current_min_max_delay for instance #{$instance}"
+  rand = Random.rand(1...1000)
+  if (rand < 500) # 50% - period to decrease sleeps faster, with larger random steps
+     log "reduce_current_min_max_delay: actual reducing"
+     reduce= Random.rand(5)
+     delay = IO.readlines("#{$domain}/delay")
+     min=delay[0].to_i
+     max=delay[1].to_i
+     min=min-reduce
+     max=max-reduce
+     if (min < 2)
+        min = 100
      end
-   end
+     if (max < 11)
+        max = 200
+     end
+     log "reduce_current_min_max_delay new min #{min} new max #{max}"
+     File.open("#{$domain}/delay", "w") { |f| f.write "#{min}\n#{max}\n" }
+  end
 end
 
 def run
