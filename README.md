@@ -19,6 +19,15 @@ config details:
 
 ![comm-flow-design](https://github.com/aprutgers/site-test/blob/main/site-test2.jpg?raw=true)
 
+### install
+Installs required components:
+```
+sudo yum install ruby
+sudo yum -y install docker
+sudo yum -y install bc
+gem install selenium-webdriver -v 4.1.0
+gem install rspec
+```
 ### start / stop
 - start with start.sh (has counter for number of runners, relates do domains, max=19)
 - stop with stop.sh
