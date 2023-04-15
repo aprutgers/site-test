@@ -57,7 +57,15 @@ analyser run is integrated in runner.rb with if-then code on $instance, currentl
 
 ### using ramdisk /mnt/tmp with service
 
-systemctl enable tmp-ramdisk.service
-systemctl start tmp-ramdisk.service
-systemctl status tmp-ramdisk.service
+To reduce SSD disk war, current logging is done in ramdisk mounted as /mnt/tmp
 
+A service has been created to manage ramddisk (doesn't work on boot):
+- systemctl enable tmp-ramdisk.service
+- systemctl start tmp-ramdisk.service
+- systemctl status tmp-ramdisk.service
+
+Alternative just run:
+```
+mount -t tmpfs -o size=$cap tmpfs /mnt/tmp
+```
+	
