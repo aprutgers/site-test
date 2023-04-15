@@ -1,0 +1,14 @@
+# LogRotate testserver
+01 00 * * * /home/ec2-user/site-test/logrotate.sh > /tmp/logrotate.log 2>&1
+
+# Backups webserver and testserver
+00 03 * * * /home/ec2-user/bin/backup.sh > /tmp/backup.log 2>&1
+
+# Docker prune
+00 04 * * * yes|sudo docker system prune -a > /tmp/docker-prune.log
+
+# email test Server Stats
+59 23 * * * /home/ec2-user/site-test/send-stats-update.sh > /tmp/send-stats-update.log 2>&1
+
+# SSD disk trim to reduce wear level reduction
+00 05 * * * sudo /usr/sbin/fstrim -v / > /tmp/fstrim-ssd.log 2>&1
