@@ -27,6 +27,16 @@ After check out run
 ./install.sh
 ```
 
+### required cache / operational directories
+
+```
+mkdir countrycache
+mkdir psi
+```
+
+- countrycache - stores proxy IP country
+- psi - stores state of running psi tunnels
+
 ### start / stop
 - start with start.sh (has counter for number of runners, relates do domains, max=19)
 - stop with stop.sh
