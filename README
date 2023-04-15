@@ -1,0 +1,12 @@
+######################
+#      domain map    #
+######################
+see file domains, line must end on , for grep to work to distinct 1 and 10, 2 20 and so on
+analyser run is integrated in runner.rb with if-then code on $instance, currently instance==20
+
+# using ramdisk /mnt/tmp with service
+
+systemctl enable tmp-ramdisk.service
+systemctl start tmp-ramdisk.service
+systemctl status tmp-ramdisk.service
+
