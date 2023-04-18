@@ -28,6 +28,8 @@ In order to achieve this the psiphon tunnel is started with a specific listen in
 psiphon-tunnel-core-x86_64 -listenInterface docker0
 ```
 
+additional the address host.docker.internal is used as the proxy address for the headless selenium browser session.
+
 ### install
 Build to deploy in fixed /home/ec2-user/site-test directory.
 
