@@ -19,6 +19,15 @@ config details:
 
 ![comm-flow-design](https://github.com/aprutgers/site-test/blob/main/site-test2.jpg?raw=true)
 
+### Docker Networking
+
+The headless browser selenium running in a docker contained process must route its traffic via the started psiphon tunnel.
+In order to achieve this the psiphon tunnel is started with a specific listen interface as follows:
+
+```
+psiphon-tunnel-core-x86_64 -listenInterface docker0
+```
+
 ### install
 Build to deploy in fixed /home/ec2-user/site-test directory.
 
