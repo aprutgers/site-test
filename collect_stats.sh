@@ -84,8 +84,17 @@ echo "DOCKER_ERRORS: $DOCKER_ERRORS (Errno::ECONNREFUSED)"
 DOCKER_EOF_ERRORS=`zcat -f $logfiles -f|strings|grep -i "EOFError"|wc -l`
 echo "DOCKER_EOF_ERRORS: $DOCKER_EOF_ERRORS (EOFError)"
 
-UNKOWN_ERRORS=`zcat -f $logfiles -f|grep -i error|grep -v ReadTimeout|grep -v NoSuchElementError|grep -v ElementNotInteractableError|grep -v ignored|grep -v StaleElementReferenceError|grep -v intercepted|grep -v ECONNREFUSED|grep -v 'too many timeouts'|grep -v "EOFError"|wc -l`
+CHROME_DRIVER_ERRORS=`zcat -f $logfiles -f|strings|egrep -i "DriverServiceSessionFactory|DevToolsActivePort"|wc -l`
+echo "CHROME_DRIVER_ERRORS: $CHROME_DRIVER_ERRORS (DriverServiceSessionFactory)"
+
+UNKOWN_ERRORS=`zcat -f $logfiles -f|grep -i error|grep -v ReadTimeout|grep -v NoSuchElementError|grep -v ElementNotInteractableError|grep -v ignored|grep -v StaleElementReferenceError|grep -v intercepted|grep -v ECONNREFUSED|grep -v 'too many timeouts'|grep -v "EOFError"|grep -v "DriverServiceSessionFactory"|grep -v "DevToolsActivePort"|wc -l`
 echo "UNKNOWN_ERRORS: $UNKOWN_ERRORS"
+
+if [ "$UNKOWN_ERRORS" -ge 0 ]
+then
+   zcat -f $logfiles -f|grep -i error|grep -v ReadTimeout|grep -v NoSuchElementError|grep -v ElementNotInteractableError|grep -v ignored|grep -v StaleElementReferenceError|grep -v intercepted|grep -v ECONNREFUSED|grep -v 'too many timeouts'|grep -v "EOFError"|grep -v "DriverServiceSessionFactory"|grep -v "DevToolsActivePort"
+fi
+
 
 if [ "$1" == "detail" ]
 then
@@ -105,7 +114,7 @@ if [ "$hostname" == "centos9server" ]
 then
    # SSD status
    SSD_WEAR_LEVEL_COUNT=`sudo smartctl  /dev/sda -ia|grep "Wear_Leveling_Count"|awk '{ print $4}'`
-   echo "SSD_WEAR_LEVEL: $SSD_WEAR_LEVEL_COUNT"
+   echo "SSD_WEAR_LEVEL: $SSD_WEAR_LEVEL_COUNT (084p)"
    SSD_TEMP=`sudo smartctl  /dev/sda -ia|grep "Temperature_Celsius"|awk '{ print $4}'`
    echo "SSD_TEMP: $SSD_TEMP"
 
