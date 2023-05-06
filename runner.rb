@@ -430,7 +430,7 @@ def runloop
    loopcount.times do |count|
       log "runloop: run iteration #{count}"
       visitor
-      randomsleep('runloop',5,27) # min-max define the session lenght= min-max x loopcount
+      randomsleep('runloop',3,19) # min-max define the session lenght= min-max x loopcount
       if (country_ok())
         log "runloop: country #{$country} ok, checking..."
         checker
