@@ -1,6 +1,6 @@
 #!/bin/sh
 cd /home/ec2-user/site-test
-clients=8
+clients=10
 interval=7
 echo start with interval $sleep seconds $clients test runner instances ...
 c=1

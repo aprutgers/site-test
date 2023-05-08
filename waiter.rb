@@ -47,10 +47,10 @@ def reduce_current_min_max_delay
      min=min-reduce
      max=max-reduce
      if (min < 2)
-        min = 20
+        min = 40
      end
-     if (max <= 20)
-        max = 200
+     if (max <= 100)
+        max = 400
      end
      log "reduce_current_min_max_delay new min #{min} new max #{max}"
      File.open("#{$domain}/delay", "w") { |f| f.write "#{min}\n#{max}\n" }
