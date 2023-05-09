@@ -1,0 +1,63 @@
+====================================================================
+START REPORT DATE: Tue 9 May 13:30:01 CEST 2023 - DAY
+====================================================================
+
+TOTAL_PAGE_LOADS: 8842
+DOMAIN_PAGE_LOADS: 7165
+DOMAIN_PAGE_LOAD_RATIO: 81.03%
+BREAKOUT:
+   hyperscalercloud.nl: 1401 (19.55%)
+   hypercloudzone.com: 996 (13.90%)
+   infonu.nl: 2872 (40.08%)
+   pubcloudnews.tech: 868 (12.11%)
+
+NO SEARCH RESULTS: 2166
+SEARCH CLICKS: 380
+ADVERT CLICKS: 88
+AD_CLICK_COUNT_OK: 86
+AD_CLICK_OK_RATE: 97.72 %
+DOMAIN_CLICK_TROUGH_RATE: 1.20 % (CTR)
+AD_FOUND_COUNT: 121
+AD_ZERO_FOUND_COUNT: 50 (41.32)%
+AD_NON_ZERO_FOUND_COUNT: 71 (58.67%)
+DOCKER_RUNS: 1344
+NETWORK_ERRORS: 0
+TIMEOUT_ERRORS: 422 (Net::ReadTimeout)
+DOCKER_ERRORS: 0 (Errno::ECONNREFUSED)
+DOCKER_EOF_ERRORS: 0 (EOFError)
+CHROME_DRIVER_ERRORS: 0 (DriverServiceSessionFactory)
+UNKNOWN_ERRORS: 0
+DOCKER_ERRATE: 0 %
+FORBIDDEN: 0
+SSD_WEAR_LEVEL: 084 (084p)
+SSD_TEMP: 033
+MNT_TMP_USED: 28%
+PROXYFAIL: 633
+
+LATEST ADVERT_CLICK RESULTS(20):
+
+     1	2023-05-09 11:15:13 +0200 runner.rb(7): 
+     2	2023-05-09 11:20:31 +0200 runner.rb(4): How do you create an IPv4 CIDR block? 
+     3	2023-05-09 11:20:33 +0200 runner.rb(4): Helpwire | Setting up a Business - The Tools You Need
+     4	2023-05-09 11:22:28 +0200 runner.rb(7): 
+     5	2023-05-09 11:26:07 +0200 runner.rb(7): IT Support Services 
+     6	2023-05-09 11:45:48 +0200 runner.rb(8): Flat ring on extensions, T-tip hair extensions voor microringen.
+     7	2023-05-09 12:00:16 +0200 runner.rb(1): Boek tickets voor attracties, musea en leuke activiteiten | musement
+     8	2023-05-09 12:13:27 +0200 runner.rb(8): Small Business and Franchise Consulting | Canada | Extraordinary Executive
+     9	2023-05-09 12:17:14 +0200 runner.rb(8): NATURES GRAND 
+    10	2023-05-09 12:24:24 +0200 runner.rb(1): Hyper Scale Cloud Blog NL 
+    11	2023-05-09 12:24:28 +0200 runner.rb(1): nationalusacorporation.com
+    12	2023-05-09 12:26:44 +0200 runner.rb(3): i-Kozijn | Hoogwaardige kunststof kozijnen voordelig geprijsd
+    13	2023-05-09 13:04:39 +0200 runner.rb(10): Best Web Hosting - Windows VPS - Cloud Server - AccuWeb - 2023
+    14	2023-05-09 13:12:00 +0200 runner.rb(10): Google Cloud Platform (GCP) 
+    15	2023-05-09 13:12:04 +0200 runner.rb(10): 
+    16	2023-05-09 13:13:42 +0200 runner.rb(10): 
+    17	2023-05-09 13:17:23 +0200 runner.rb(4): Hyper Cloud Zone 
+    18	2023-05-09 13:18:04 +0200 runner.rb(9): Azure 
+    19	2023-05-09 13:18:06 +0200 runner.rb(9): HPE (HP) Server & Storage in UAE, Abu dhabi, Dubai | Infome
+    20	2023-05-09 13:27:28 +0200 runner.rb(6): 
+
+
+====================================================================
+END REPORT DATE: Tue 9 May 13:30:14 CEST 2023
+====================================================================
