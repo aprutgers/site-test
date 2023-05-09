@@ -1,60 +1,49 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SiteTest</title>
-<link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"></link>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
 <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"></link>
 <style>
 * {
   box-sizing: border-box;
 }
-
 body {
   font-family: Arial, Helvetica, sans-serif;
 }
-
-/* Style the header */
 header {
   background-color: #666;
-  padding: 30px;
+  padding: 20px;
   text-align: center;
-  font-size: 35px;
+  font-size: 25px;
   color: white;
 }
-
-/* Create two columns/boxes that floats next to each other */
 nav {
   float: left;
   width: 25%;
   text-align: left;
   background: #ccc;
-  padding: 5px;
+  padding: 10px;
 }
 article {
   float: left;
-  padding: 20px;
+  padding: 10px;
   width: 50%;
   background-color: #f1f1f1;
 }
-
-/* Clear floats after the columns */
 section::after {
   content: "";
   display: table;
   clear: both;
 }
-
-/* Style the footer */
 footer {
   background-color: #777;
   padding: 10px;
   text-align: center;
   color: white;
 }
-
-/* Responsive layout - makes the two columns/boxes stack on top of each other instead of next to each other, on small screens */
 @media (max-width: 800px) {
   nav, article {
     width: 100%;
@@ -63,36 +52,6 @@ footer {
 }
 </style>
 <script>
-//window.dataLayer = window.dataLayer || [];
-function getValues(myText) {
-   var lines = myText.split("\n");
-   var numLines = lines.length;
-   var i;
-   var values = Array();
-   for (i = 0; i < numLines; i++) {
-     var line = lines[i];
-     if (line != '') {
-        value = line.split(' ')[1];
-        values.push(value)
-     }
-   }
-   return values;
-}
-function getNegativeValues(myText) {
-   var lines = myText.split("\n");
-   var numLines = lines.length;
-   var i;
-   var values = Array();
-   for (i = 0; i < numLines; i++) {
-     var line = lines[i];
-     if (line != '') {
-        value = line.split(' ')[1];
-        values.push(-value)
-     }
-   }
-   return values;
-}
-
 function getLabels(myText) {
    var lines = myText.split("\n");
    var numLines = lines.length;
@@ -107,7 +66,6 @@ function getLabels(myText) {
    }
    return labels;
 }
-
 function getDomains() {
      url="sitetest.php";
      jQuery.ajaxSetup({async:false});
@@ -134,7 +92,6 @@ function createTable(domain,card) {
    $table.appendTo("body");
    return $table;
 }
-
 function renderCard(card,domain) {
      url="sitetest.php?domain="+domain;
      $.get( url, function( data ) {
@@ -143,17 +100,13 @@ function renderCard(card,domain) {
       $("#card-"+card).html(table_card);
      }); // end get
 }
-
 $(document).ready(function(){
    domains=getDomains();
    for (var card = 0; card < domains.length; card++) {
-      domain=domains[card]
-      renderCard(card,domain)
+      renderCard(card,domains[card])
    }
-   // overall stats
    renderCard(5,'stats')
-
-}); // end of doc ready
+});// end of doc ready
 </script>
 </head>
 <body>
@@ -167,8 +120,6 @@ Site Test Stats
   <nav><div id="card-3"></div></nav>
   <article><div id="card-5"></article>
 </section>
-<footer>
-<center>APR Digital Studios - Site Test Stats</center>
-</footer>
+<footer><center>APR Digital Studios</center></footer>
 </body>
 </html>
