@@ -1,19 +1,69 @@
 <!DOCTYPE html>
 <html>
 <head>
-<!-- (c) APR Digital Studios -->
-<title>SiteTest</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SiteTest</title>
 <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"></link>
 <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
-<script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"</script>
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"</script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@3.0.0/dist/chart.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
-</head>
-<script>
-window.dataLayer = window.dataLayer || [];
+<script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+<style>
+* {
+  box-sizing: border-box;
+}
 
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Style the header */
+header {
+  background-color: #666;
+  padding: 30px;
+  text-align: center;
+  font-size: 35px;
+  color: white;
+}
+
+/* Create two columns/boxes that floats next to each other */
+nav {
+  float: left;
+  width: 25%;
+  text-align: left;
+  background: #ccc;
+  padding: 5px;
+}
+article {
+  float: left;
+  padding: 20px;
+  width: 50%;
+  background-color: #f1f1f1;
+}
+
+/* Clear floats after the columns */
+section::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Style the footer */
+footer {
+  background-color: #777;
+  padding: 10px;
+  text-align: center;
+  color: white;
+}
+
+/* Responsive layout - makes the two columns/boxes stack on top of each other instead of next to each other, on small screens */
+@media (max-width: 800px) {
+  nav, article {
+    width: 100%;
+    height: auto;
+  }
+}
+</style>
+<script>
+//window.dataLayer = window.dataLayer || [];
 function getValues(myText) {
    var lines = myText.split("\n");
    var numLines = lines.length;
@@ -57,20 +107,6 @@ function getLabels(myText) {
    }
    return labels;
 }
-
-// Chart globals
-dayChart = null;
-
-// Register the chart plugin to all charts:
-Chart.register(ChartDataLabels);
-Chart.defaults.set('plugins.datalabels', {
-  color: '#FFFFFF',
-  anchor: 'end',
-  align: 'bottom',
-  font: { size: 10 },
-  offset: 0,
-  weight: 'bold'
-});
 
 function getDomains() {
      url="sitetest.php";
@@ -118,45 +154,21 @@ $(document).ready(function(){
    renderCard(5,'stats')
 
 }); // end of doc ready
-
 </script>
+</head>
 <body>
-<div data-role="page">
-
-	<div data-role="header">
-	   <h1>Site Test</h1>
-	</div>
-
-	<div role="main" class="ui-content">
-
-           <div class="ui-grid-c">
-	      <div class="ui-block-a">
-	         <div id="card-0"></div>
-              </div>
-	      <div class="ui-block-b">
-	         <div id="card-1"></div>
-              </div>
-	      <div class="ui-block-c">
-	         <div id="card-2"></div>
-              </div>
-	      <div class="ui-block-d">
-	         <div id="card-3"></div>
-              </div>
-           </div><!-- grid-->
-
-	   <hr/>
-           <div class="ui-grid-a">
-	      <div class="ui-block-a">
-	         <div id="card-5"></div>
-              </div>
-           </div>
-        </div><!-- main content -->
-
-        <div data-role="footer">
-            <center>APR Digital Studios - Site Test Stats</center>
-       </div><!-- /footer -->
-
-</div><!-- /page -->
-
+<header>
+Site Test Stats
+</header>
+<section>
+  <nav><div id="card-0"></div></nav>
+  <nav><div id="card-1"></div></nav>
+  <nav><div id="card-2"></div></nav>
+  <nav><div id="card-3"></div></nav>
+  <article><div id="card-5"></article>
+</section>
+<footer>
+<center>APR Digital Studios - Site Test Stats</center>
+</footer>
 </body>
 </html>
