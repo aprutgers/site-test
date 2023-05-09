@@ -12,7 +12,6 @@ config details:
 - ctr is configired in [domain]/ctr (as fraction of 100)
 - partial surf history configured in [domain]/sites
 
-
 ## Design and Process Flow
 
 ![higl-level-design](https://github.com/aprutgers/site-test/blob/main/site-test-1.jpg?raw=true)
