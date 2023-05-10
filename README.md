@@ -58,7 +58,7 @@ logging is sent and rotated to [/mnt]/tmp - see ramdisk below
 ### statistics
 You can collect statistics using the CLI `./collect_stats.sh`
 
-Also a web verstion is also available as ![Site Test](http://192.168.178.91/sitetest.html)
+Also a web verstion is also available as http://192.168.178.91/sitetest.html
 The web version is calling sitetest.php-->sitetest.sh-->sitetest.py.
 
 For this purpose the collect_stats.sh script is run in cron and output is saved in collect_stats.txt which is 
