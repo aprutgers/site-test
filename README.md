@@ -59,10 +59,9 @@ logging is sent and rotated to [/mnt]/tmp - see ramdisk below
 You can collect statistics using the CLI `./collect_stats.sh`
 
 Also a web verstion is also available as http://192.168.178.91/sitetest.html
-The web version is calling sitetest.php-->sitetest.sh-->sitetest.py.
-
-For this purpose the collect_stats.sh script is run in cron and output is saved in collect_stats.txt which is 
-used by the web version to present a stats page.
+The web version is calling sitetest.php, then sitetest.sh and finally sitetest.py.
+For this purpose the `collect_stats.sh` script is run in cron and output is saved in `collect_stats.txt` 
+which is read by the sitetest.py script to provide data to the statistics web page.
 
 ### crontab 
 Crontab has entries for logging and docker prune maintenance as well as emailing daily stats
