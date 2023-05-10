@@ -69,35 +69,51 @@ def get_domain_card(domain):
    f.close()
 
    json = json + (' "%s" : "%s..%ss" '%('min/max-delay',mindelay,maxdelay))+",\n"
-   #json = json + (' "%s" : "%s" '%('max-delay',maxdelay))+",\n"
-   json = json + (' "%s" : "%s" '%('site-ctr',ctr))# +",\n"
-   #json = json + (' "%s" : "%s" '%('pageviews',pageviews))+",\n"
-   #json = json + (' "%s" : "%s" '%('page%',pagepct))
+   json = json + (' "%s" : "%s%s" '%('site-ctr',int(ctr)/10,'%'))# +",\n"
    json = json + '\n}'
 
    return json
 
+def update_ctr(domain,ctr):
+   try:
+      df="/home/ec2-user/site-test/"+domain+"/ctr"
+      f = open(df, "w")
+      f.write(ctr+"\n")
+      f.close()
+      print('updated ctr value for domain='+domain+' to value=' + ctr)
+   except Exception as err:
+      print(err)
+
 def main():
-   d_domain=''
+   d_domain='all'
+   d_action='get'
    d_debug=0
    d_part='1'
+   d_ctr='5'
    parser = argparse.ArgumentParser(description='provide home power measurements at P1 port - KWh production, KWh usage and gas m3')
+   parser.add_argument('--action',dest='action',action='store',default=d_action,help='action get or put')
    parser.add_argument('--domain',dest='domain',action='store',default=d_domain,help='site test domain')
    parser.add_argument('--part',dest='part',action='store',default=d_part,help='part of stats 1 or 2')
+   parser.add_argument('--ctr',dest='ctr',action='store',default=d_ctr,help='ctr value in case of put')
    parser.add_argument('--debug', dest='debug', action='store',default=d_debug, help='for debug provide 1 or 2')
    args=vars(parser.parse_args())
+   action = args['action']
    domain = args['domain']
    part   = args['part']
+   ctr    = args['ctr']
    g_debug= int(args['debug'])
 
-   if (domain==''):
-      if (g_debug): print("return domains")
-      print(get_domains())
-   else:
-      if (g_debug): print("print_domain_card domain="+domain)
-      if (domain=='stats'):
-         print(get_stats_card(part))
-      else: 
-         print(get_domain_card(domain))
+   if (action=='get'):
+      if (domain=='all'):
+         if (g_debug): print("return domains")
+         print(get_domains())
+      else:
+         if (g_debug): print("print_domain_card domain="+domain)
+         if (domain=='stats'):
+            print(get_stats_card(part))
+         else: 
+            print(get_domain_card(domain))
+   if (action=='put'):
+      update_ctr(domain,ctr)
 
 main()

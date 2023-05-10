@@ -67,7 +67,7 @@ function getLabels(myText) {
    return labels;
 }
 function getDomains() {
-     url="sitetest.php";
+     url="sitetest.php?action=get";
      jQuery.ajaxSetup({async:false});
      domains = [];
      $.get( url, function( data ) {
@@ -76,6 +76,7 @@ function getDomains() {
      jQuery.ajaxSetup({async:true});
      return domains;
 }
+
 function createTable(domain,card) {
    var $table = $("<table>", { 'border':'0' });
    var $thead = $("<thead>");
@@ -84,7 +85,14 @@ function createTable(domain,card) {
    for (const [key, value] of Object.entries(card)) {
       newTr = $('<tr>');
       newTr.append($('<td>', { 'text':key, }));
-      newTr.append($('<td>', { 'text':value, }));
+      if (key == 'site-ctr') {
+        newTd = $('<td>')
+	ufunc='updatectr(this,"'+domain+'")'
+        newTd.append($('<input>', { 'value':value,'width':'50%','onchange':ufunc }));
+        newTr.append(newTd);
+      } else {
+         newTr.append($('<td>', { 'text':value, }));
+      }
       $tbody.append(newTr);
    }
    $table.append($thead);
@@ -93,7 +101,7 @@ function createTable(domain,card) {
    return $table;
 }
 function renderCard(card,domain,part) {
-     url="sitetest.php?domain="+domain+"&part="+part
+     url="sitetest.php?action=get&domain="+domain+"&part="+part
      console.log('renderCard card='+card+' domain='+domain+' part='+part)
      $.get( url, function( data ) {
       json_card = JSON.parse(data)
@@ -109,6 +117,21 @@ $(document).ready(function(){
    renderCard(5,'stats',1)
    renderCard(6,'stats',2)
 });// end of doc ready
+
+function updatectr(e,domain) {
+   console.log("updatectr called domain="+domain+" value="+e.value)
+   ctr = e.value
+   ctr = ctr.replace("%", "");
+   ctr = 10 * parseFloat(ctr)
+   res = $.ajax({
+        url: 'sitetest.php?action=put&part=0',
+        type: "GET",
+        data: { domain: domain, ctr: ctr}
+   });
+   e.disabled=true
+}
+
+
 </script>
 </head>
 <body>
