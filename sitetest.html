@@ -81,7 +81,10 @@ function createTable(domain,card) {
    var $table = $("<table>", { 'border':'0' });
    var $thead = $("<thead>");
    var $tbody = $("<tbody>");
-   $thead.append($('<th>', { 'text':domain, 'colspan':'2' }));
+   if (domain != 'stats') {
+      link = "<a href=https://"+domain+" target='_'>"+domain+"</a>";
+      $thead.append($('<th>', { 'html':link, 'colspan':'2' }));
+   } 
    for (const [key, value] of Object.entries(card)) {
       newTr = $('<tr>');
       newTr.append($('<td>', { 'text':key, }));

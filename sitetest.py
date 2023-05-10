@@ -28,9 +28,9 @@ def get_stats_card(part):
       try:
          if (":" in line):
              line=line.strip()
-             key=line.split(':')[0]
-             val=line.split(':')[1]
-             #json = json + (' "%s" : "%s" '%(key,val))+",\n"
+             cols = line.split(':')
+             key=cols.pop(0)
+             val=':'.join(cols)
              keyvals.append(' "%s" : "%s" '%(key,val))
       except Exception as err:
          print(err)
