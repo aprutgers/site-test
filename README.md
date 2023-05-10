@@ -58,6 +58,8 @@ logging is sent and rotated to [/mnt]/tmp - see ramdisk below
 ### stats
 ./collect_stats.sh
 
+A web verstion is also available as http://domain-or-ip/sitetest.html, using sitetest.php, sitetest.sh and sitetest.py
+
 ### crontab 
 Crontab has entries for logging and docker prune maintenance as well as emailing daily stats
 
