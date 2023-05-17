@@ -47,10 +47,11 @@ def reduce_current_min_max_delay
   log "read #{$domain}/minmax: start_min=#{start_min} start_max=#{start_max} step=#{step} chance=#{pct}/1000"
   if (rand < pct) # 70% - period to decrease sleeps faster, with larger random steps
      log "reduce_current_min_max_delay: actual reducing"
-     reduce= Random.rand(step)
+     reduce=Random.rand(1..step)
      delay = IO.readlines("#{$domain}/delay")
      min=delay[0].to_i
      max=delay[1].to_i
+     log "current min=#{min} new max=#{max} reduce=#{reduce}"
      min=min-reduce
      max=max-reduce
      if (min < step)
@@ -59,7 +60,7 @@ def reduce_current_min_max_delay
      if (max <= start_min)
         max = start_max
      end
-     log "reduce_current_min_max_delay new min=#{min} new max=#{max}"
+     log "new min=#{min} new max=#{max}"
      File.open("#{$domain}/delay", "w") { |f| f.write "#{min}\n#{max}\n" }
   end
 end
