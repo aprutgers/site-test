@@ -38,21 +38,28 @@ end
 def reduce_current_min_max_delay
   log "reduce_current_min_max_delay for instance #{$instance}"
   rand = Random.rand(1...1000)
-  if (rand < 600) # 60% - period to decrease sleeps faster, with larger random steps
+  # configurable start min and max for downcount waiter
+  minmax = IO.readlines("#{$domain}/minmax")
+  start_min=minmax[0].to_i
+  start_max=minmax[1].to_i
+  step=minmax[2].to_i
+  pct=minmax[3].to_i # 0 .. 1000
+  log "read #{$domain}/minmax: start_min=#{start_min} start_max=#{start_max} step=#{step} chance=#{pct}/1000"
+  if (rand < pct) # 70% - period to decrease sleeps faster, with larger random steps
      log "reduce_current_min_max_delay: actual reducing"
-     reduce= Random.rand(3)
+     reduce= Random.rand(step)
      delay = IO.readlines("#{$domain}/delay")
      min=delay[0].to_i
      max=delay[1].to_i
      min=min-reduce
      max=max-reduce
-     if (min < 2)
-        min = 40
+     if (min < step)
+        min = start_min
      end
-     if (max <= 100)
-        max = 400
+     if (max <= start_min)
+        max = start_max
      end
-     log "reduce_current_min_max_delay new min #{min} new max #{max}"
+     log "reduce_current_min_max_delay new min=#{min} new max=#{max}"
      File.open("#{$domain}/delay", "w") { |f| f.write "#{min}\n#{max}\n" }
   end
 end
