@@ -314,9 +314,9 @@ def get_target_links
    element_names.length.times do |i|
       begin
            element_name = element_names[i]
-           log "get_target_links for " + element_name
+           #log "get_target_links for " + element_name
            iframe = @driver.find_element(:xpath => element_name)
-           log "get_target_links: swith to iframe=" + iframe.attribute("id")
+           #log "get_target_links: swith to iframe=" + iframe.attribute("id")
            @driver.switch_to.frame iframe
            links = @driver.find_elements(:tag_name, "a") 
            links.length.times do |i|
@@ -329,10 +329,11 @@ def get_target_links
               end
            end
       rescue => e
-           log "get_target_links: exception rescue checker"
-           log "get_target_links: an error of type #{e.class} happened, message is #{e.message}"
-      ensure
-          log "get_target_links: ensure"
+           #log "get_target_links: exception rescue checker"
+           #log "get_target_links: an error of type #{e.class} happened, message is #{e.message}"
+           tmp=0
+      #ensure
+          #log "get_target_links: ensure"
       end
    end
    len = target_links.length()
