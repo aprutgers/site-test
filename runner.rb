@@ -396,7 +396,7 @@ end
 def visitor
   log "visitor..."
   if (Random.rand(1...10)< 6) # 60% direct, 40% trough google search
-     if (Random.rand(1...10)< 4) # 40% history
+     if (Random.rand(1...10)< 2) # 20% history
         log "visitor: get a random site to build history/state"
         get_random_site
      end
@@ -431,7 +431,7 @@ def runloop
    loopcount.times do |count|
       log "runloop: run iteration #{count}"
       visitor
-      randomsleep('runloop',3,19) # min-max define the session lenght= min-max x loopcount
+      randomsleep('runloop',3,21) # min-max define the session lenght= min-max x loopcount
       if (country_ok())
         log "runloop: country #{$country} ok, checking..."
         checker
