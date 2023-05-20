@@ -8,9 +8,10 @@ Config details:
 - traffic is randomized per domain based on the [domain]/articles
 - agents are randomized per domain based on the [domain]/agents
 - traffic volume is managed by number of instances in the domain file and domain/delay
+- traffic volume is randomized by the waiter.rb and its config in domain/minmax
 - A part of the traffic is generated via google search configured in [domain]/search
 - The ctr% is configured in [domain]/ctr (as fraction of 100 so 18 implies 1.8%)
-- browser surf history configured in [domain]/sites
+- browser history configured in [domain]/sites (20% of hits build history)
 
 ## Design and Process Flow
 
@@ -52,6 +53,28 @@ sudo mkdir -p /mnt/tmp
 - start with start.sh (start.sh has counter for number of runners, relates do domains, max=19)
 - stop with stop.sh
 - restart with restart.sh
+
+### minmax
+
+The traffic volume is managed by a randomized traffic volume in a reversed saw-tooth pattern, starting with low traffic, slow increasing to a peak,
+and dropping again to the basis. This pattern can be configured per domain. To achieve this for each domain a file called minmax exists which 
+configures the initial minimal wait time, maximal wait time, decrease step and chance%.
+The config file is a basic ascii file containing each value per line for example:
+
+```
+cat pubcloudnews.tech/minmax
+20
+200
+5
+800
+```
+This configuration means:
+- minimal wait time of 20 seconds assigned when the delay counter drops below step size (5)
+- maximal wait time of 200 seconds assinged when the delay coounter drops below the mininal wait time (20)
+- step size of 5 seconds of decreasing minimal and maximal wait time when chance occurs
+- 800/1000 (80%) chance of a decrease between runs
+
+The current counting min-max values are stored in the {domain}/delay and are used to determine the actual delay with a Rand(min..max) ruby function.
 
 Logging is sent and rotated to [/mnt]/tmp - see ramdisk below
 
@@ -102,7 +125,7 @@ Analyser runs can fail, like no working psiphon tunnel, just re-run.
 
 ### using ramdisk /mnt/tmp with service
 
-To reduce SSD disk war, current logging is done in ramdisk mounted as /mnt/tmp
+To reduce SSD disk ware(degradation), current logging is done in ramdisk mounted as /mnt/tmp
 
 A service has been created to manage ramddisk (doesn't work on boot):
 - systemctl enable tmp-ramdisk.service
