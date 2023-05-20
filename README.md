@@ -62,7 +62,7 @@ configures the initial minimal wait time, maximal wait time, decrease step and c
 The config file is a basic ascii file containing each value per line for example:
 
 ```
-cat pubcloudnews.tech/minmax
+$ cat pubcloudnews.tech/minmax
 20
 200
 5
