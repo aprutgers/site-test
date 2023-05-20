@@ -54,7 +54,7 @@ sudo mkdir -p /mnt/tmp
 - stop with stop.sh
 - restart with restart.sh
 
-### minmax
+### Traffic volume randomisation
 
 The traffic volume is managed by a randomized traffic volume in a reversed saw-tooth pattern, starting with low traffic, slow increasing to a peak,
 and dropping again to the basis. This pattern can be configured per domain. To achieve this for each domain a file called minmax exists which 
@@ -75,8 +75,17 @@ This configuration means:
 - 800/1000 (80%) chance of a decrease between runs
 
 The current counting min-max values are stored in the {domain}/delay and are used to determine the actual delay with a Rand(min..max) ruby function.
+The ruby module that implements this algorithem is implemented in `waiter.rb` which is started between `runner.rb` executions.
 
-Logging is sent and rotated to [/mnt]/tmp - see ramdisk below
+### logging
+
+Logging is sent and rotated to [/mnt]/tmp - see ramdisk below.
+Each runner instance has a seperate log file called `test-runner-instanceN.log` where N is the instance number.
+An alias is available in the deployment account called `vlog` that does a tail -f for all thise log files at once:
+
+```
+alias vlog='tail -f /mnt/tmp/test-runner-instance*.log'
+```
 
 ### statistics
 You can collect statistics on the site-test processes using the CLI `./collect_stats.sh`
