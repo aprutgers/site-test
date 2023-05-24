@@ -22,7 +22,7 @@ header {
 }
 nav {
   float: left;
-  width: 25%;
+  width: 20%;
   text-align: left;
   background: #ccc;
   padding: 10px;
@@ -91,7 +91,7 @@ function createTable(domain,card) {
       if (key == 'site-ctr') {
         newTd = $('<td>')
 	ufunc='updatectr(this,"'+domain+'")'
-        newTd.append($('<input>', { 'value':value,'width':'50%','onchange':ufunc }));
+        newTd.append($('<input>', { 'value':value,'width':'40%','onchange':ufunc }));
         newTr.append(newTd);
       } else {
          newTr.append($('<td>', { 'text':value, }));
@@ -146,6 +146,9 @@ Site Test Stats
   <nav><div id="card-1"></div></nav>
   <nav><div id="card-2"></div></nav>
   <nav><div id="card-3"></div></nav>
+  <nav><div id="card-4"></div></nav>
+</section>
+<section>
   <article><div id="card-96"></article>
   <article><div id="card-97"></article>
 </section>
