@@ -17,7 +17,7 @@ echo ""
 TOTAL_PAGE_LOADS=`zcat -f $logfiles|strings|grep -i 'safe_get_url: url='|wc -l`
 echo TOTAL_PAGE_LOADS: $TOTAL_PAGE_LOADS
 
-DOMAINS=`cat domains|grep -v ,20,|awk -F: '{ print $1 "|"}'|tr -d "\n"|sed 's/|$//'`
+DOMAINS=`cat /home/ec2-user/site-test/domains|grep -v ,20,|awk -F: '{ print $1 "|"}'|tr -d "\n"|sed 's/|$//'`
 DOMAIN_PAGE_LOADS=`zcat -f $logfiles|strings|grep -i 'safe_get_url: url='|egrep "$DOMAINS"|grep -v google.com|wc -l`
 echo DOMAIN_PAGE_LOADS: $DOMAIN_PAGE_LOADS
 

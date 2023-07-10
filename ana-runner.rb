@@ -18,7 +18,7 @@ end
 
 def randomsleep(func, min, max)
    sleep = Random.rand(min...max)
-   if ($instance.to_i == 30) 
+   if ($instance.to_i == 20) 
       sleep=8
    end
    log "#{func}: sleep #{sleep} seconds"
@@ -169,14 +169,14 @@ def safe_get_url(url)
      begin
         @driver.get url
         html = @driver.find_element(:tag_name, 'html')
-        log "safe_get_url: html retrived size = " + html.attribute("innerHTML").length.to_s
+        log "safe_get_url: html retrieved size = " + html.attribute("innerHTML").length.to_s
         title=@driver.title
         log "safe_get_url title=" + title
    
         #debug for analyser run in case needed
-        #if ($instance.to_i == 30) 
-           #log "DEBUG HTML" + html.attribute("innerHTML")
-        #end
+        if ($instance.to_i == 20) 
+           log "DEBUG HTML" + html.attribute("innerHTML")
+        end
 
         # console log disabled, enable for debug 
         #console_log = @driver.manage.logs.get :browser
@@ -203,7 +203,7 @@ end
 
 def get_random_site
      log "get_random_site ..."
-     url = 'https://' + get_random_site_url()
+     url = 'http://' + get_random_site_url()
      log "get_random_site: log get random site url=" + url
      safe_get_url(url)
      log "get_random_site done."
@@ -220,13 +220,13 @@ def get_location_pubcloudnews
      log "get_location_pubcloudnews..."
      rand = Random.rand(1...1000)
      if (rand <= 100)
-        url="https://#{$domain}?src=" + get_push_method
+        url="http://#{$domain}?src=" + get_push_method
      end
      if (rand > 100 and rand <= 500)
-        url="https://#{$domain}/" + get_random_page
+        url="http://#{$domain}/" + get_random_page
      end
      if (rand > 500)
-        url="https://#{$domain}/" + get_random_article
+        url="http://#{$domain}/" + get_random_article
      end
      safe_get_url(url)
      log "get_location_pubcloudnews: done."
@@ -253,7 +253,7 @@ def search
         |link|
         match_target=link.attribute("href")
         if match_target != nil
-           if (match_target.length > 0) && (match_target.match(/^https:\/\/#{$domain}/))
+           if (match_target.length > 0) && (match_target.match(/^http:\/\/#{$domain}/))
               target=link
 	      log "search: match target" + link.to_s
               break
@@ -352,7 +352,7 @@ def checker
   len = target_links.length()
   log "checker: collected #{len} links domain:#{$domain} country:#{$country}"
   rand=Random.rand(1...1000)
-  if ((rand < $ctr) or ($instance.to_i == 30)) #CTR minus errors
+  if ((rand < $ctr) or ($instance.to_i == 20)) #CTR minus errors
      log "checker: rand=#{rand} < ctr=#{$ctr} instance=#{$instance}"
      # Multiple attempts to click, stops when it succeeds as it navigates away...
      log "checker: going to click #{len} found targets"
@@ -370,7 +370,7 @@ def checker
            end
            title = @driver.title
            log "checker: ADVERT_CONVERSION_TITLE=" + title
-           if ($instance.to_i == 30)
+           if ($instance.to_i == 20)
               html = @driver.find_element(:tag_name, 'html')
               log html.attribute("innerHTML")
            end
@@ -423,7 +423,7 @@ end
 
 def runloop
    loopcount = Random.rand(1..6) # increase later to increase session time
-   if ($instance.to_i == 30) 
+   if ($instance.to_i == 20) 
       loopcount=1 
       log "runloop: analyser run"
    end

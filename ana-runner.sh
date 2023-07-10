@@ -1,6 +1,6 @@
 #!/bin/sh
 sudo chmod 666 /var/run/docker.sock
-instance=20
+instance=30
 if [ -z "$instance" ]
 then
    echo "usage $0 <instance>"

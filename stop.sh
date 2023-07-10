@@ -42,7 +42,7 @@ sleep 3
 
 echo stop and remove all containers
 
-dids=`docker ps -a|awk '{ print $1 }'|grep -v CONT`
+dids=`docker ps -a|grep -v smokeping|awk '{ print $1 }'|grep -v CONT`
 echo stopping docker ids $dids
 for did  in $dids
 do

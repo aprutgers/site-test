@@ -100,7 +100,7 @@ The Linux crontab has entries for logging and docker prune maintenance as well a
 Also the crontab has an entry to collect the statistics each 15 minutes for the web version.
 
 ### analyser runs
-Analyser runs make a ctr for a instance==20
+Analyser runs make a ctr for a instance==30
 ```
 ./ana-runner.sh
 ```
@@ -115,12 +115,12 @@ hyperscalercloud.nl:,2,
 hypercloudzone.com:,3,
 infonu.nl:,4,
 pubcloudnews.tech:,5,
-pubcloudnews.tech:,20,
+pubcloudnews.tech:,30,
 hypercloudhub.nl:
 
 ```
-A line must start with the domain, then a : and then a , and also end on , for grep to work to distinct 1 and 10, 2 20 and so on
-The analyser run is integrated in runner.rb with if-then code on instance number, currently instance==20 is the analyser run.
+A line must start with the domain, then a : and then a , and also end on , for grep to work to distinct 1 and 10, 2 30 and so on
+The analyser run is integrated in runner.rb with if-then code on instance number, currently instance==30 is the analyser run.
 
 ### analyser run
 

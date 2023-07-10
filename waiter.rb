@@ -69,7 +69,7 @@ def run
   $instance=ARGV[0]||"1"
   $domain=ARGV[1]||"#{$domain}"
   log "waiter run instance=#{$instance} domain=#{$domain}..."
-  if ($instance != "20")
+  if ($instance != "30")
      reduce_current_min_max_delay
      sleep_current_min_max_delay
   else
