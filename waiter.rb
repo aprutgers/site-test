@@ -13,6 +13,10 @@ def log(str)
 end
 
 def randomsleep(func, min, max)
+   if (min == max)
+   then
+      max=min+1
+   end
    sleep = Random.rand(min...max)
    log "#{func}: sleep #{sleep} seconds"
    sleep sleep
