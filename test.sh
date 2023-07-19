@@ -16,9 +16,9 @@ then
   exit 1
 fi
 
-if ! [[ $instance =~ [1-9]  ]]
+if ! [[ $instance =~ [1-9] ]]
 then
-   echo "instance should be between 1-9"
+   echo "instance should be between 1-20"
    exit 2
 fi
 
@@ -27,11 +27,11 @@ safe_stop_docker() {
    id=`docker ps -a|grep $name|awk '{print $1}'`
    if [ ! -z "$id" ]
    then
-      echo "docker kill $name - $id"
+      #echo "docker kill $name - $id"
       docker kill $id
       docker rm $id
-   else
-     echo "docker $name not running"
+   #else
+      #echo "docker $name not running"
    fi
 }
 
@@ -40,26 +40,26 @@ safe_stop_docker() {
 # which can see the docker internal network; notice grev -v in cmd below removes first line csv header.
 # Also cache the country name to reduce requests
 # 
-echo get_cached_country for psiproxy=$psiproxy
+#echo get_cached_country for psiproxy=$psiproxy
 id=`echo $psiproxy|cut -d. -f5`
-echo id=$id
+#echo id=$id
 if [ -f /home/ec2-user/site-test/countrycache/$id ]
 then
-   echo "using cache for id=$id"
+   #echo "using cache for id=$id"
    country=`cat /home/ec2-user/site-test/countrycache/$id`
-   echo "country=$country"
+   #echo "country=$country"
 else
    country=`docker run --add-host=host.docker.internal:host-gateway --rm curlimages/curl -s -x $proxy https://ipapi.co/csv|grep -v country|cut -d, -f10`
-   echo "$country" > /home/ec2-user/site-test/countrycache/$id
-   echo "country=$country"
+   #echo "$country" > /home/ec2-user/site-test/countrycache/$id
+   #echo "country=$country"
 fi
 
-echo "create ramdisk storage for chrome session to reduce SSD writes/wear"
+#echo "create ramdisk storage for chrome session to reduce SSD writes/wear"
 chromedir="/mnt/tmp/chrome${instance}"
 sudo rm -rf $chromedir
 mkdir $chromedir
 chmod -R 777 $chromedir
-echo "create ramdisk $chromedir done."
+#echo "create ramdisk $chromedir done."
 
 domain=`grep ,$instance, domains|awk -F: '{ print $1 }'`
 if [ -z "$domain" ]
@@ -69,15 +69,15 @@ then
    exit
 fi
 
-echo "using domain $domain for instance $instance"
+#echo "using domain $domain for instance $instance"
 
 safe_stop_docker $name
 
-echo start the waiter...
+#echo start the waiter...
 ruby waiter.rb $instance $domain
-echo waiter done.
+#echo waiter done.
 
-echo "starting new test run with single docker thread instance=$instance domain=$domain country=$country name=$name port=$port proxy=$proxy"
+echo "`date`: starting new test run with single docker thread instance=$instance domain=$domain country=$country name=$name port=$port proxy=$proxy"
 
 # SIZES info sample
 # docker run -d -e SCREEN_WIDTH=1366 -e SCREEN_HEIGHT=768 -e SCREEN_DEPTH=24 -e SCREEN_DPI=74
@@ -85,8 +85,8 @@ echo "starting new test run with single docker thread instance=$instance domain=
 dims=`./getscreendims.sh`
 w=`echo $dims|cut -d, -f1`
 h=`echo $dims|cut -d, -f2`
-echo browser dimensions $w,$h
-echo docker run...
+echo "`date`: browser dimensions $w,$h"
+#echo docker run...
 docker run -e SCREEN_WIDTH=$w -e SCREEN_HEIGHT=$h \
    --name $name \
    -d \
@@ -95,12 +95,17 @@ docker run -e SCREEN_WIDTH=$w -e SCREEN_HEIGHT=$h \
    -v $chromedir:$chromedir \
    --shm-size="1g" \
    selenium/standalone-chrome:latest
-echo docker sleep $dsleep
+echo "`date`: sleep $dsleep for docker to become active"
 sleep $dsleep
 
+debug=0
+if [ "$instance" -eq "30" ]
+then
+   debug=1
+fi
 program="runner.rb"
-echo starting ruby program=$program port=$port instance=$instance country=$country chromedir=$chromedir...
-ruby $program $port $instance $domain "$country"
-echo ruby $program $port done.
+echo "`date`: starting ruby program=$program port=$port instance=$instance country=$country chromedir=$chromedir debug=$debug ..."
+ruby $program $port $instance $domain "$country" $debug
+echo "`date`: ruby $program $port done."
 safe_stop_docker $name
-echo test run instance=$instance done.
+echo "`date`: test run instance=$instance done."

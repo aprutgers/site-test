@@ -9,11 +9,20 @@ $domain   = "pubcloudnews.tech" # default
 $country  = ""
 $vrecurse = 0
 $ctr      = 16 # safe default
+$debug    = 0  # default
 
 def log(str)
   ts=Time.now
   puts "#{ts} runner.rb(#{$instance}): #{str}"
   STDOUT.flush
+end
+
+def dbg(str)
+  if ($debug.to_i > 0)
+     ts=Time.now
+     puts "#{ts} DEBUG: runner.rb(#{$instance}): #{str}"
+     STDOUT.flush
+  end
 end
 
 def randomsleep(func, min, max)
@@ -23,28 +32,27 @@ def randomsleep(func, min, max)
    end
    log "#{func}: sleep #{sleep} seconds"
    sleep sleep
-   log "#{func}: sleep done."
+   dbg "#{func}: sleep done."
 end
 
 def setup_with_socks_proxy(agent,port)
-  log "setup_with_socks_proxy..."
+  dbg "setup_with_socks_proxy..."
   # proxy is implemented by running instance of psiphon-tunnel-core-x86_64, listening to port 8081, 8082,.. (instance counts up)
   proxyport = 8080 + $instance.to_i
   proxy="http://host.docker.internal:" + proxyport.to_s
-  log "setup_with_socks_proxy: proxy=" + proxy
+  dbg "setup_with_socks_proxy: proxy=" + proxy
   mobile_emulation = { "userAgent" => agent }
   # selenuim is started in docker with a port mapping and listens to port 5000, 5001 etc.
   url = "http://0.0.0.0:" + port + "/wd/hub"
   options = Selenium::WebDriver::Chrome::Options.new
   options.add_argument '--proxy-server=' + proxy
   options.add_argument 'user-data-dir=/mnt/tmp/chrome' + $instance
-  #options.add_argument '-disk-cache-size=4096'
   #DO NOT USE HEADLESS OPTION
   options.add_option(:detach, true)
   options.add_option(:accept_insecure_certs, true)
   options.add_option(:mobileEmulation, mobile_emulation )
   @driver = Selenium::WebDriver.for(:remote, url: url, capabilities: options)
-  log "setup_with_socks_proxy: done."
+  dbg "setup_with_socks_proxy: done."
 end
 
 def teardown
@@ -52,10 +60,10 @@ def teardown
   begin
     @driver.quit
   rescue => e
-     log "teardown: exception rescue teardown"
-     log "teardown: an error of type #{e.class} happened, message is #{e.message}"
+     dbg "teardown: exception rescue teardown"
+     dbg "teardown: an error of type #{e.class} happened, message is #{e.message}"
    ensure
-      log "teardown: ensure"
+      dbg "teardown: ensure"
   end
   log "teardown done."
 end
@@ -70,7 +78,6 @@ def get_random_agent
 end 
 
 def get_random_search
-  log "get_random_search..."
   random_line = nil
   File.open("#{$domain}/search") do |file|
     file_lines = file.readlines()
@@ -185,9 +192,9 @@ def safe_get_url(url)
         STDOUT.flush
      rescue => e
         log "safe_get_url: An error of type #{e.class} happened, message is #{e.message}"
-        log "safe_get_url: error at driver.get url, ignored"
+        dbg "safe_get_url: error at driver.get url, ignored"
         if (e.class == Net::ReadTimeout)
-           log "safe_get_url timeout count = " + $timeouts.to_s
+           dbg "safe_get_url timeout count = " + $timeouts.to_s
            $timeouts = $timeouts + 1
            if ($timeouts > 3)
               log "safe_get_url: error exit on too many timeouts"
@@ -196,28 +203,28 @@ def safe_get_url(url)
            end
         end 
      ensure
-        log "safe_get_url: exception ensure"
+        dbg "safe_get_url: exception ensure"
      end
-     log "safe_get_url: done."
+     dbg "safe_get_url: done."
 end
 
 def get_random_site
-     log "get_random_site ..."
+     dbg "get_random_site ..."
      url = 'https://' + get_random_site_url()
-     log "get_random_site: log get random site url=" + url
+     dbg "get_random_site: log get random site url=" + url
      safe_get_url(url)
-     log "get_random_site done."
+     dbg "get_random_site done."
 end
 
 def get_location_infonu
-     log "get_location_infonu..."
+     dbg "get_location_infonu..."
      url=get_random_article
      safe_get_url(url)
-     log "get_location_infonu done."
+     dbg "get_location_infonu done."
 end
 
 def get_location_pubcloudnews
-     log "get_location_pubcloudnews..."
+     dbg "get_location_pubcloudnews..."
      rand = Random.rand(1...1000)
      if (rand <= 100)
         url="https://#{$domain}?src=" + get_push_method
@@ -229,7 +236,7 @@ def get_location_pubcloudnews
         url="https://#{$domain}/" + get_random_article
      end
      safe_get_url(url)
-     log "get_location_pubcloudnews: done."
+     dbg "get_location_pubcloudnews: done."
 end
 
 def get_location
@@ -242,9 +249,9 @@ def get_location
 end
 
 def search
-  log "search..."
+  dbg "search..."
   url = get_random_search
-  log "search: doing a get url " + url
+  dbg "search: doing a get url " + url
   safe_get_url(url)
   randomsleep('search',5,11) # wait for search results to render...
   target=nil
@@ -255,7 +262,7 @@ def search
         if match_target != nil
            if (match_target.length > 0) && (match_target.match(/^https:\/\/#{$domain}/))
               target=link
-	      log "search: match target" + link.to_s
+	      dbg "search: match target" + link.to_s
               break
            end
        end
@@ -263,28 +270,28 @@ def search
   }
   if target != nil
      #log "search: found:" + target.to_s
-     log "search: target found..."
+     dbg "search: target found..."
      #log target.attribute("innerHTML")
-     log target.attribute("href")
+     dbg target.attribute("href")
      new_url = target.attribute("href")
-     log "search: click on url:" + new_url
+     dbg "search: click on url:" + new_url
      begin
-        log "search: click on target.."
+        dbg "search: click on target.."
         res = @driver.execute_script("return arguments[0].click()" , target) # using JavaScript to workaround intercept errror on target.click()
-        log "search: click result=" + res.to_s
+        dbg "search: click result=" + res.to_s
         title = @driver.title
         log "search: SEARCH_CLICK_TITLE=" + title
         #disabled to reduce logging, debug only
         #html = @driver.find_element(:tag_name, 'html')
         #log html.attribute("innerHTML")
         rescue => e
-           log "search: exception rescue search on target link"
-           log "search: an error of type #{e.class} happened, message is #{e.message}"
+           dbg "search: exception rescue search on target link"
+           dbg "search: an error of type #{e.class} happened, message is #{e.message}"
         ensure
-           log "search: click ensure"
+           dbg "search: click ensure"
         end
   else
-     log "search: info could not locate a target link to click on in result, doing a get_location instead"
+     dbg "search: info could not locate a target link to click on in result, doing a get_location instead"
      get_location
   end
 end
@@ -298,7 +305,7 @@ def country_ok
 end
 
 def get_target_links
-   log "get_target_links..."
+   dbg "get_target_links..."
    target_links=[] 
    element_names = [ '//*[@id="aswift_1"]', 
                      '//*[@id="aswift_2"]', 
@@ -324,7 +331,7 @@ def get_target_links
               d1=l1.attribute("data-asoch-targets")
               # TDB added , to filter out ad0 itself seems to error a lot
               if (d1 =~ /ad0,/)
-                 log "click ad target found:"  + d1
+                 dbg "click ad target found:"  + d1
                  target_links << l1
               end
            end
@@ -338,22 +345,22 @@ def get_target_links
    end
    len = target_links.length()
    log "get_target_links: found #{len} targets"
-   log "get_target_links done."
+   dbg "get_target_links done."
    shuffed_target_links=[] 
    shuffed_target_links=target_links.shuffle()
    shuffed_target_links
 end
 
 def checker
-  log "checker..."
-  log "checker ctr="+$ctr.to_s
+  dbg "checker..."
+  dbg "checker ctr="+$ctr.to_s
   randomsleep('checker',7,17) # to render and load page/javascript
   target_links=get_target_links()
   len = target_links.length()
-  log "checker: collected #{len} links domain:#{$domain} country:#{$country}"
+  dbg "checker: collected #{len} links domain:#{$domain} country:#{$country}"
   rand=Random.rand(1...1000)
   if ((rand < $ctr) or ($instance.to_i == 30)) #CTR minus errors
-     log "checker: rand=#{rand} < ctr=#{$ctr} instance=#{$instance}"
+     dbg "checker: rand=#{rand} < ctr=#{$ctr} instance=#{$instance}"
      # Multiple attempts to click, stops when it succeeds as it navigates away...
      log "checker: going to click #{len} found targets"
      target_links.each {
@@ -362,7 +369,6 @@ def checker
            d1=target_link.attribute("data-asoch-targets")
            log "checker: target_link.click #{d1}"
            click_result = target_link.click()
-           #click_result = @driver.execute_script("return arguments[0].click()" , target_link) # using JavaScript to workaround intercept errror on target.click()
            log "checker: click result:"
            if (click_result)
               log "checker: click result="
@@ -374,86 +380,87 @@ def checker
               html = @driver.find_element(:tag_name, 'html')
               log html.attribute("innerHTML")
            end
-           log "checker: click done"
+           dbg "checker: click done"
         rescue => e
-           log "checker: exception rescue on target link"
-           log "checker: an error of type #{e.class} happened, message is #{e.message}"
+           dbg "checker: exception rescue on target link"
+           dbg "checker: an error of type #{e.class} happened, message is #{e.message}"
            # TBD check if bailing works
            if (e.message =~ /stale element reference: element is not attached to the page document/)
               log "checker: bailing loop on StaleElementReferenceError"
               return
            end
         ensure
-           log "checker: ensure"
+           dbg "checker: ensure"
         end
      }
   else
-    log "checker: no click conversion for rand=#{rand}."
+    dbg "checker: no click conversion for rand=#{rand}."
   end
-  log "checker: done."
+  dbg "checker: done."
 end
 
 def visitor
-  log "visitor..."
+  dbg "visitor..."
   if (Random.rand(1...10)< 6) # 60% direct, 40% trough google search
      if (Random.rand(1...10)< 3) # 30% history
-        log "visitor: get a random site to build history/state"
+        dbg "visitor: get a random site to build history/state"
         get_random_site
      end
-     log "visitor: get a target site location"
+     dbg "visitor: get a target site location"
      get_location
   else
-     log "visitor: do a search and click on one of the search results, or get_location on no results"
+     dbg "visitor: do a search and click on one of the search results, or get_location on no results"
      search
   end
   if ($domain == "infonu.nl")
      if (is_ca_pub())
-         log "visitor: publisher ca-pub-2815999156088974 continue..."
+         dbg "visitor: publisher ca-pub-2815999156088974 continue..."
      else
         if ($vrecurse < 12) # recursion depth protection
            $vrecurse = $vrecurse + 1
-           log "visitor: not publisher ca-pub-2815999156088974 - recurse - #{$vrecurse}"
+           dbg "visitor: not publisher ca-pub-2815999156088974 - recurse - #{$vrecurse}"
            visitor
         end
      end
   end
   $vrecurse=0
-  log "visitor: done."
+  dbg "visitor: done."
 end
 
 def runloop
    loopcount = Random.rand(1..6) # increase later to increase session time
    if ($instance.to_i == 30) 
       loopcount=1 
-      log "runloop: analyser run"
+      dbg "runloop: analyser run"
    end
-   log "runloop: with loopcount=" + loopcount.to_s
+   dbg "runloop: with loopcount=" + loopcount.to_s
    loopcount.times do |count|
-      log "runloop: run iteration #{count}"
+      dbg "runloop: run iteration #{count}"
       visitor
       randomsleep('runloop',5,23) # min-max define the session lenght= min-max x loopcount
       if (country_ok())
-        log "runloop: country #{$country} ok, checking..."
+        dbg "runloop: country #{$country} ok, checking..."
         checker
      else
-        log "runloop: skip checker for #{$country}"
+        dbg "runloop: skip checker for #{$country}"
      end
    end
 end
 
 def run
-  log "run ..."
+  log "run start ..."
   port=ARGV[0]
   $instance=ARGV[1]||"1"
   $domain=ARGV[2]||"#{$domain}"
   $country=ARGV[3]||""
+  $debug=$ARGV[4]||"#{$debug}"
   $ctr=get_ctr()
   agent=get_random_agent
-  log "run: port="  + port
-  log "run: agent=" + agent
-  log "run: domain=" + $domain
-  log "run: country=" + $country
-  log "run: ctr=" + $ctr.to_s
+  dbg "run: port="  + port
+  dbg "run: agent=" + agent
+  dbg "run: domain=" + $domain
+  dbg "run: country=" + $country
+  dbg "run: ctr=" + $ctr.to_s
   setup_with_socks_proxy(agent,port)
   runloop
   teardown
