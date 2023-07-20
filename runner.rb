@@ -9,7 +9,7 @@ $domain   = "pubcloudnews.tech" # default
 $country  = ""
 $vrecurse = 0
 $ctr      = 16 # safe default
-$debug    = 0  # default
+$debug    = 1  # default
 
 def log(str)
   ts=Time.now
@@ -20,7 +20,7 @@ end
 def dbg(str)
   if ($debug.to_i > 0)
      ts=Time.now
-     puts "#{ts} DEBUG: runner.rb(#{$instance}): #{str}"
+     puts "#{ts} runner.rb(#{$instance}): #{str}"
      STDOUT.flush
   end
 end
@@ -456,6 +456,7 @@ def run
   $debug=$ARGV[4]||"#{$debug}"
   $ctr=get_ctr()
   agent=get_random_agent
+  log "run: debug=" + $debug
   dbg "run: port="  + port
   dbg "run: agent=" + agent
   dbg "run: domain=" + $domain
