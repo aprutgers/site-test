@@ -86,7 +86,7 @@ dims=`./getscreendims.sh`
 w=`echo $dims|cut -d, -f1`
 h=`echo $dims|cut -d, -f2`
 echo "`date`: browser dimensions $w,$h"
-#echo docker run...
+echo docker run...
 docker run -e SCREEN_WIDTH=$w -e SCREEN_HEIGHT=$h \
    --name $name \
    -d \
@@ -98,7 +98,7 @@ docker run -e SCREEN_WIDTH=$w -e SCREEN_HEIGHT=$h \
 echo "`date`: sleep $dsleep for docker to become active"
 sleep $dsleep
 
-debug=0
+debug=1
 if [ "$instance" -eq "30" ]
 then
    debug=1
