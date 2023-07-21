@@ -1,5 +1,6 @@
 #!/bin/sh
 hostname=`hostname`
+date=`date`
 if [ "$1" == "full" ]
 then
    logfiles='/mnt/tmp/test-runner-instance*.log* /tmp/rotated/*'
@@ -8,7 +9,12 @@ else
    logfiles='/mnt/tmp/test-runner-instance*.log*'
    mode='DAY'
 fi
-date=`date`
+if [ "$1" == "history" ]
+then
+    date="$2"
+    logfiles="/tmp/rotated/*test-runner-instance*.log-$date.gz"
+    mode='DAY'
+fi
 echo "===================================================================="
 echo                      START REPORT DATE: $date - $mode
 echo "===================================================================="
@@ -17,7 +23,7 @@ echo ""
 TOTAL_PAGE_LOADS=`zcat -f $logfiles|strings|grep -i 'safe_get_url: url='|wc -l`
 echo TOTAL_PAGE_LOADS: $TOTAL_PAGE_LOADS
 
-DOMAINS=`cat /home/ec2-user/site-test/domains|grep -v ,20,|awk -F: '{ print $1 "|"}'|tr -d "\n"|sed 's/|$//'`
+DOMAINS=`cat /home/ec2-user/site-test/domains|grep -v ,30,|awk -F: '{ print $1 "|"}'|tr -d "\n"|sed 's/|$//'`
 DOMAIN_PAGE_LOADS=`zcat -f $logfiles|strings|grep -i 'safe_get_url: url='|egrep "$DOMAINS"|grep -v google.com|wc -l`
 echo DOMAIN_PAGE_LOADS: $DOMAIN_PAGE_LOADS
 
@@ -28,7 +34,8 @@ echo "DOMAIN_PAGE_LOAD_RATIO: $DOMAIN_PAGE_LOAD_RATIO%"
 if [ "$mode" == "DAY" ]
 then
    echo "BREAKOUT:"
-   LIST_DOMAINS=`cat /home/ec2-user/site-test/domains|grep -v ,20,|egrep -v ":$"|awk -F: '{ print $1}'`
+   LIST_DOMAINS=`cat /home/ec2-user/site-test/domains|grep -v ,30,|egrep -v ":$"|awk -F: '{ print $1}'`
+   #echo LIST_DOMAINS=$LIST_DOMAINS
    for domain in $LIST_DOMAINS
    do
       SPLIT_DOMAIN_PAGE_LOADS=`zcat -f $logfiles|strings|grep -i 'safe_get_url: url='|grep "$domain"|grep -v google.com|wc -l`
@@ -47,6 +54,9 @@ echo SEARCH CLICKS: $SEARCH_CLICKS
 AD_CLICKS=`zcat -f $logfiles|strings|grep -i ADVERT_CONVERSION_TITLE| wc -l`
 echo ADVERT CLICKS: $AD_CLICKS
 
+INTERCEPTED_COUNT=`zcat -f $logfiles|strings|grep -i intercepted|wc -l`
+echo "INTERCEPTED: $INTERCEPTED_COUNT (notice: all ad links are tried intercepted is most from titleClk and bodyClk)"
+
 AD_CLICK_COUNT_OK=`zcat -f $logfiles|strings|grep ADVERT_CONVERSION_TITLE|cut -d: -f 1,3,5| \
 grep -v "Public Cloud News"|\
 grep -v "Technisch beleggen"|\
@@ -59,6 +69,7 @@ echo "AD_CLICK_OK_RATE: $OKR %"
 CTR=`echo "scale=2;100 * $AD_CLICK_COUNT_OK / $DOMAIN_PAGE_LOADS" | bc -l`
 echo "DOMAIN_CLICK_TROUGH_RATE: $CTR % (CTR)"
 
+
 # zero v.s. non zero ad links found
 AD_FOUND_COUNT=`zcat -f $logfiles|strings|grep "going to click"|wc -l`
 echo "AD_FOUND_COUNT: $AD_FOUND_COUNT"
@@ -68,6 +79,7 @@ echo "AD_ZERO_FOUND_COUNT: $AD_ZERO_FOUND_COUNT ($AD_ZERO_FOUND_PCT)%"
 AD_NON_ZERO_FOUND_COUNT=`zcat -f $logfiles|strings|grep "going to click"|grep -v "0 found"|wc -l`
 AD_NON_ZERO_FOUND_PCT=`echo "scale=2;100 * $AD_NON_ZERO_FOUND_COUNT / $AD_FOUND_COUNT" | bc -l`
 echo "AD_NON_ZERO_FOUND_COUNT: $AD_NON_ZERO_FOUND_COUNT ($AD_NON_ZERO_FOUND_PCT%)"
+
 
 DOCKER_RUNS=`zcat -f $logfiles -f|strings|grep -i 'docker run...$'|wc -l`
 echo "DOCKER_RUNS: $DOCKER_RUNS"
