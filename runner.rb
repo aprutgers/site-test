@@ -352,15 +352,20 @@ def get_target_links
 end
 
 def checker
-  dbg "checker..."
-  dbg "checker ctr="+$ctr.to_s
+  dbg "checker ctr= #{$ctr}"
   randomsleep('checker',7,17) # to render and load page/javascript
   target_links=get_target_links()
-  len = target_links.length()
+  len=target_links.length()
   dbg "checker: collected #{len} links domain:#{$domain} country:#{$country}"
   rand=Random.rand(1...1000)
-  if ((rand < $ctr) or ($instance.to_i == 30)) #CTR minus errors
-     dbg "checker: rand=#{rand} < ctr=#{$ctr} instance=#{$instance}"
+  # increase chance on a click when there are actual ads
+  $adjusted_ctr = $ctr
+  if (len > 0)
+     $adjusted_ctr = 2 * $ctr
+     log "checker: #{len} adverts on page, double ctr to #{$adjusted_ctr}"
+  end
+  if ((rand < $adjusted_ctr) or ($instance.to_i == 30)) #CTR minus errors
+     dbg "checker: rand=#{rand} < ctr=#{$adjusted_ctr} instance=#{$instance}"
      # Multiple attempts to click, stops when it succeeds as it navigates away...
      log "checker: going to click #{len} found targets"
      target_links.each {

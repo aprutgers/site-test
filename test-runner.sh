@@ -18,7 +18,7 @@ stop_proxy () {
    fi
 }
 
-proxywait=10
+proxywait=15
 proxylog="/mnt/tmp/test${instance}-psiphon.log"
 drd="-dataRootDirectory /home/ec2-user/site-test/psi/${instance}"
 lif="-listenInterface docker0"

@@ -1,7 +1,7 @@
 #!/bin/sh
 cd /home/ec2-user/site-test
 clients=19
-interval=7
+interval=3
 echo start with interval $sleep seconds $clients test runner instances ...
 c=1
 while [ $c -le $clients ]
@@ -14,3 +14,12 @@ do
    w
 done
 echo $clients times test instance started see /mnt/tmp/test-runner-instance*.log
+# keep running when started from systemd as this shell is parent of all forked runners
+if [ "$1" == "systemd" ]
+then
+   while true
+   do
+     echo "started as systemd sleep 5000 seconds"
+     sleep 5000
+   done
+fi

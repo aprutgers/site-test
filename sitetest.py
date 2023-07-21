@@ -30,7 +30,9 @@ def get_stats_card(part):
              line=line.strip()
              cols = line.split(':')
              key=cols.pop(0)
+             key=key.replace('"','')
              val=':'.join(cols)
+             val=val.replace('"','')
              keyvals.append(' "%s" : "%s" '%(key,val))
       except Exception as err:
          print(err)
