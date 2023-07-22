@@ -361,7 +361,7 @@ def checker
   # increase chance on a click when there are actual ads
   $adjusted_ctr = $ctr
   if (len > 0)
-     $adjusted_ctr = 2 * $ctr
+     $adjusted_ctr = 1 * $ctr
      log "checker: #{len} adverts on page, double ctr to #{$adjusted_ctr}"
   end
   if ((rand < $adjusted_ctr) or ($instance.to_i == 30)) #CTR minus errors
