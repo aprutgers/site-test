@@ -98,7 +98,7 @@ docker run -e SCREEN_WIDTH=$w -e SCREEN_HEIGHT=$h \
 echo "`date`: sleep $dsleep for docker to become active"
 sleep $dsleep
 
-debug=1
+debug=0
 if [ "$instance" -eq "30" ]
 then
    debug=1

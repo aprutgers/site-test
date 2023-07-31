@@ -304,6 +304,46 @@ def country_ok
   result
 end
 
+def do_safe_click(b1)
+   dbg "do_safe_click..."
+   begin
+      label=b1.attribute("aria-label")
+      dbg "button: #{label}"
+      click_result = b1.click()
+      #click_result = @driver.execute_script("return arguments[0].click()" , b1)
+      log "get_consent_button: click result:"
+      if (click_result)
+         log "get_consent_button: click result="
+         log click_result.to_s
+      end
+   rescue => e
+        dbg "get_consent_button: exception rescue checker"
+        dbg "get_consent_button: an error of type #{e.class} happened, message is #{e.message}"
+   ensure
+       dbg "get_consent_button: ensure"
+   end
+end
+
+def close_consent_button
+   dbg "get_consent_button..."
+   #element_name =  '//*[@class="fc-dialog-container"]'
+   #div = @driver.find_element(:xpath => element_name)
+   #div.click()
+   buttons = @driver.find_elements(:tag_name, "button") 
+   len = buttons.length()
+   dbg "number of buttons found: #{len}"
+   buttons.length.times do |i|
+      b1=buttons.at(i)
+      label=b1.attribute("aria-label")
+      #dbg "button: #{label}"
+      if ((label == 'Consent') or (label =~ /Accept/))
+        dbg "found button: #{label}"
+        do_safe_click(b1)
+        do_safe_click(b1)
+      end
+   end
+end
+
 def get_target_links
    dbg "get_target_links..."
    target_links=[] 
@@ -336,11 +376,11 @@ def get_target_links
               end
            end
       rescue => e
-           #log "get_target_links: exception rescue checker"
-           #log "get_target_links: an error of type #{e.class} happened, message is #{e.message}"
+           #dbg "get_target_links: exception rescue checker"
+           #dbg "get_target_links: an error of type #{e.class} happened, message is #{e.message}"
            tmp=0
       #ensure
-          #log "get_target_links: ensure"
+          #dbg "get_target_links: ensure"
       end
    end
    len = target_links.length()
@@ -361,8 +401,8 @@ def checker
   # increase chance on a click when there are actual ads
   $adjusted_ctr = $ctr
   if (len > 0)
-     $adjusted_ctr = 1 * $ctr
-     log "checker: #{len} adverts on page, double ctr to #{$adjusted_ctr}"
+     $adjusted_ctr = 1.5 * $ctr
+     log "checker: #{len} adverts on page, double ctr from #{$ctr} to #{$adjusted_ctr}"
   end
   if ((rand < $adjusted_ctr) or ($instance.to_i == 30)) #CTR minus errors
      dbg "checker: rand=#{rand} < ctr=#{$adjusted_ctr} instance=#{$instance}"
@@ -381,10 +421,10 @@ def checker
            end
            title = @driver.title
            log "checker: ADVERT_CONVERSION_TITLE=" + title
-           if ($instance.to_i == 30)
-              html = @driver.find_element(:tag_name, 'html')
-              log html.attribute("innerHTML")
-           end
+           #if ($instance.to_i == 30)
+              #html = @driver.find_element(:tag_name, 'html')
+              #log html.attribute("innerHTML")
+           #end
            dbg "checker: click done"
         rescue => e
            dbg "checker: exception rescue on target link"
@@ -433,7 +473,7 @@ def visitor
 end
 
 def runloop
-   loopcount = Random.rand(1..6) # increase later to increase session time
+   loopcount = Random.rand(1..6) 
    if ($instance.to_i == 30) 
       loopcount=1 
       dbg "runloop: analyser run"
@@ -445,6 +485,7 @@ def runloop
       randomsleep('runloop',5,23) # min-max define the session lenght= min-max x loopcount
       if (country_ok())
         dbg "runloop: country #{$country} ok, checking..."
+        # close_consent_button # does not seem to work - button can't be clicked
         checker
      else
         dbg "runloop: skip checker for #{$country}"
