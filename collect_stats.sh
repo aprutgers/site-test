@@ -99,18 +99,19 @@ echo "DOCKER_EOF_ERRORS: $DOCKER_EOF_ERRORS (EOFError)"
 CHROME_DRIVER_ERRORS=`zcat -f $logfiles -f|strings|egrep -i "DriverServiceSessionFactory|DevToolsActivePort"|wc -l`
 echo "CHROME_DRIVER_ERRORS: $CHROME_DRIVER_ERRORS (DriverServiceSessionFactory)"
 
-UNKOWN_ERRORS=`zcat -f $logfiles -f|grep -i error|grep -v ReadTimeout|grep -v NoSuchElementError|grep -v ElementNotInteractableError|grep -v ignored|grep -v StaleElementReferenceError|grep -v intercepted|grep -v ECONNREFUSED|grep -v 'too many timeouts'|grep -v "EOFError"|grep -v "DriverServiceSessionFactory"|grep -v "DevToolsActivePort"|wc -l`
+CONNECTION_CLOSED_ERRORS=`zcat -f $logfiles -f|strings|grep -i "ERR_CONNECTION_CLOSED"|wc -l`
+echo "CONNECTION_CLOSED_ERRORS: $CONNECTION_CLOSED_ERRORS (Selenium::WebDriver::Error)"
+
+UNKOWN_EXPR="ReadTimeout|NoSuchElementError|ElementNotInteractableError|ignored|StaleElementReferenceError|intercepted|ECONNREFUSED|too many timeouts|EOFError|DriverServiceSessionFactory|DevToolsActivePort|ERR_CONNECTION_CLOSED"
+
+#UNKOWN_ERRORS=`zcat -f $logfiles -f|grep -i error|grep -v ReadTimeout|grep -v NoSuchElementError|grep -v ElementNotInteractableError|grep -v ignored|grep -v StaleElementReferenceError|grep -v intercepted|grep -v ECONNREFUSED|grep -v 'too many timeouts'|grep -v "EOFError"|grep -v "DriverServiceSessionFactory"|grep -v "DevToolsActivePort"|grep -v "ERR_CONNECTION_CLOSED"|wc -l`
+
+UNKOWN_ERRORS=`zcat -f $logfiles|grep -i error|egrep -iv "$UNKOWN_EXPR"|wc -l`
 echo "UNKNOWN_ERRORS: $UNKOWN_ERRORS"
 
 if [ "$UNKOWN_ERRORS" -ge 0 ]
 then
-   zcat -f $logfiles -f|grep -i error|grep -v ReadTimeout|grep -v NoSuchElementError|grep -v ElementNotInteractableError|grep -v ignored|grep -v StaleElementReferenceError|grep -v intercepted|grep -v ECONNREFUSED|grep -v 'too many timeouts'|grep -v "EOFError"|grep -v "DriverServiceSessionFactory"|grep -v "DevToolsActivePort"
-fi
-
-
-if [ "$1" == "detail" ]
-then
-   zcat -f $logfiles -f|grep -i error|grep -v ReadTimeout|grep -v NoSuchElementError|grep -v ElementNotInteractableError|grep -v ignored|grep -v StaleElementReferenceError|grep -v intercepted|grep -v ECONNREFUSED|grep -v 'too many timeouts'|grep -v "EOFError"
+   zcat -f $logfiles -f|grep -i error|egrep -iv "$UNKOWN_EXPR"
 fi
 
 DER=`echo "scale=2;100 * $DOCKER_ERRORS / $DOCKER_RUNS" | bc -l`
