@@ -28,7 +28,7 @@ end
 def randomsleep(func, min, max)
    sleep = Random.rand(min...max)
    if ($instance.to_i == 30) 
-      sleep=8
+      sleep=5
    end
    log "#{func}: sleep #{sleep} seconds"
    sleep sleep
@@ -291,7 +291,7 @@ def search
            dbg "search: click ensure"
         end
   else
-     dbg "search: info could not locate a target link to click on in result, doing a get_location instead"
+     log "search: info could not locate a target link to click on in result, doing a get_location instead"
      get_location
   end
 end
@@ -305,40 +305,53 @@ def country_ok
 end
 
 def do_safe_click(b1)
-   dbg "do_safe_click..."
+   log "do_safe_click..."
    begin
+      name=b1.text()
       label=b1.attribute("aria-label")
-      dbg "button: #{label}"
+      log "do_safe_click: button: #{name}|#{label}"
       click_result = b1.click()
       #click_result = @driver.execute_script("return arguments[0].click()" , b1)
       log "get_consent_button: click result:"
       if (click_result)
-         log "get_consent_button: click result="
-         log click_result.to_s
+         log "get_consent_button: click result=" + click_result.to_s
       end
+      log "get_consent_button: click end ok"
    rescue => e
-        dbg "get_consent_button: exception rescue checker"
-        dbg "get_consent_button: an error of type #{e.class} happened, message is #{e.message}"
+        log "get_consent_button: exception rescue checker"
+        log "get_consent_button: an error of type #{e.class} happened, message is #{e.message}"
    ensure
-       dbg "get_consent_button: ensure"
+       log "get_consent_button: ensure"
    end
 end
 
 def close_consent_button
-   dbg "get_consent_button..."
-   #element_name =  '//*[@class="fc-dialog-container"]'
-   #div = @driver.find_element(:xpath => element_name)
-   #div.click()
+   log "get_consent_button..."
    buttons = @driver.find_elements(:tag_name, "button") 
    len = buttons.length()
-   dbg "number of buttons found: #{len}"
+   log "number of buttons found: #{len}"
    buttons.length.times do |i|
       b1=buttons.at(i)
+      name=b1.text()
+      name=name.strip
       label=b1.attribute("aria-label")
-      #dbg "button: #{label}"
-      if ((label == 'Consent') or (label =~ /Accept/))
-        dbg "found button: #{label}"
+      dbg "button name: '#{name}'"
+      dbg "button label: '#{label}'"
+      # UniConsent Plugin
+      if (name == 'Agree and proceed')
+        log "click button: #{name}"
         do_safe_click(b1)
+      end
+      if (name == 'Accept All')
+        log "click button: #{name}"
+        do_safe_click(b1)
+      end
+      if (name == 'Akkoord en doorgaan')
+        log "click button: #{name}"
+        do_safe_click(b1)
+      end
+      if (label == 'Accept All')
+        log "click button: #{label}"
         do_safe_click(b1)
       end
    end
@@ -402,7 +415,7 @@ def checker
   $adjusted_ctr = $ctr
   if (len > 0)
      $adjusted_ctr = 1.5 * $ctr
-     log "checker: #{len} adverts on page, double ctr from #{$ctr} to #{$adjusted_ctr}"
+     log "checker: #{len} adverts on page, increase ctr from #{$ctr} to #{$adjusted_ctr}"
   end
   if ((rand < $adjusted_ctr) or ($instance.to_i == 30)) #CTR minus errors
      dbg "checker: rand=#{rand} < ctr=#{$adjusted_ctr} instance=#{$instance}"
@@ -425,11 +438,12 @@ def checker
               #html = @driver.find_element(:tag_name, 'html')
               #log html.attribute("innerHTML")
            #end
+           randomsleep('runloop',1,3) # wait a bit after click on page
            dbg "checker: click done"
         rescue => e
            dbg "checker: exception rescue on target link"
            dbg "checker: an error of type #{e.class} happened, message is #{e.message}"
-           # TBD check if bailing works
+           # bail StaleElementReferenceError which signals the click has worked
            if (e.message =~ /stale element reference: element is not attached to the page document/)
               log "checker: bailing loop on StaleElementReferenceError"
               return
@@ -439,9 +453,9 @@ def checker
         end
      }
   else
-    dbg "checker: no click conversion for rand=#{rand}."
+    log "checker: no click conversion for rand=#{rand}."
   end
-  dbg "checker: done."
+  log "checker: done."
 end
 
 def visitor
@@ -485,7 +499,7 @@ def runloop
       randomsleep('runloop',5,23) # min-max define the session lenght= min-max x loopcount
       if (country_ok())
         dbg "runloop: country #{$country} ok, checking..."
-        # close_consent_button # does not seem to work - button can't be clicked
+        close_consent_button
         checker
      else
         dbg "runloop: skip checker for #{$country}"
