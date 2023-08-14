@@ -8,7 +8,7 @@ $instance = 1
 $domain   = "pubcloudnews.tech" # default
 $country  = ""
 $vrecurse = 0
-$ctr      = 16 # safe default
+$ctr      = 10 # safe default
 $debug    = 1  # default
 
 def log(str)
@@ -41,6 +41,8 @@ def setup_with_socks_proxy(agent,port)
   proxyport = 8080 + $instance.to_i
   proxy="http://host.docker.internal:" + proxyport.to_s
   dbg "setup_with_socks_proxy: proxy=" + proxy
+  agent = agent.strip
+  dbg "user agent='" + agent + "'"
   mobile_emulation = { "userAgent" => agent }
   # selenuim is started in docker with a port mapping and listens to port 5000, 5001 etc.
   url = "http://0.0.0.0:" + port + "/wd/hub"
@@ -514,7 +516,7 @@ def run
   $domain=ARGV[2]||"#{$domain}"
   $country=ARGV[3]||""
   $debug=$ARGV[4]||"#{$debug}"
-  $ctr=get_ctr()
+  $ctr=get_ctr()||"#{$ctr}"
   agent=get_random_agent
   log "run: debug=" + $debug
   dbg "run: port="  + port
