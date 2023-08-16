@@ -107,6 +107,8 @@ function renderCard(card,domain,part) {
      url="sitetest.php?action=get&domain="+domain+"&part="+part
      console.log('renderCard card='+card+' domain='+domain+' part='+part)
      $.get( url, function( data ) {
+      console.log('DATA: card='+card+' domain='+domain+' part='+part)
+      console.log(data)
       json_card = JSON.parse(data)
       table_card=createTable(domain,json_card)
       $("#card-"+card).html(table_card);

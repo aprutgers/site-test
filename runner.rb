@@ -57,6 +57,40 @@ def setup_with_socks_proxy(agent,port)
   dbg "setup_with_socks_proxy: done."
 end
 
+def safe_setup_with_socks_proxy(agent,port)
+   log "safe_setup_with_socks_proxy..."
+   result=0
+   begin
+      setup_with_socks_proxy(agent,port)
+      result=1
+   rescue => e
+     result=0
+     dbg "safe_setup_with_socks_proxy: an error of type #{e.class} happened, message is #{e.message}"
+   ensure
+     dbg "safe_setup_with_socks_proxy: ensure"
+   end
+   log "safe_setup_with_socks_proxy return result=#{result}"
+   return result
+end
+
+def retry_safe_setup_with_socks_proxy(agent,port)
+   log "retry_safe_setup_with_socks_proxy..."
+   result = safe_setup_with_socks_proxy(agent,port)
+   log "retry_safe_setup_with_socks_proxy result=#{result}"
+   retrycount = 1
+   sleep = 2
+   while ((result == 0) && (retrycount < 3))
+      retrycount = retrycount + 1
+      sleep = sleep * 2
+      log "retry_safe_setup_with_socks_proxy: sleep #{sleep} seconds"
+      sleep sleep
+      log "retry_safe_setup_with_socks_proxy retrycount=#{retrycount}"
+      result = safe_setup_with_socks_proxy(agent,port)
+      log "retry_safe_setup_with_socks_proxy result=#{result}"
+   end
+   return result
+end
+
 def teardown
   log "teardown driver.quit"
   begin
@@ -64,7 +98,7 @@ def teardown
   rescue => e
      dbg "teardown: exception rescue teardown"
      dbg "teardown: an error of type #{e.class} happened, message is #{e.message}"
-   ensure
+  ensure
       dbg "teardown: ensure"
   end
   log "teardown done."
@@ -524,10 +558,14 @@ def run
   dbg "run: domain=" + $domain
   dbg "run: country=" + $country
   dbg "run: ctr=" + $ctr.to_s
-  setup_with_socks_proxy(agent,port)
-  runloop
-  teardown
-  log "run: done."
+  result = retry_safe_setup_with_socks_proxy(agent,port)
+  if (result == 1)
+     runloop
+     teardown
+     log "run: done."
+  else
+     log "run: FAIL - not done due to container connection setup error."
+  end
 end
 
 run()
