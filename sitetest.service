@@ -1,0 +1,18 @@
+[Unit]
+Description=start test-server processes
+After=network.target
+
+[Service]
+User=ec2-user
+Group=ec2-user
+#Type=forking
+WorkingDirectory=/home/ec2-user/site-test
+ExecStart=/home/ec2-user/site-test/start.sh systemd
+ExecStop=/home/ec2-user/site-test/stop.sh
+Type=simple
+#Restart=always
+#KillMode=process
+TimeoutSec=900
+
+[Install]
+WantedBy=multi-user.target
