@@ -9,6 +9,7 @@ proxy="http://host.docker.internal:${proxyport}"
 name="run$port"
 country=""
 active="true"
+debug=0
 
 if [ -z "$instance" ]
 then
@@ -98,7 +99,6 @@ docker run -e SCREEN_WIDTH=$w -e SCREEN_HEIGHT=$h \
 echo "`date`: sleep $dsleep for docker to become active"
 sleep $dsleep
 
-debug=0
 if [ "$instance" -eq "30" ]
 then
    debug=1

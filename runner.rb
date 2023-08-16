@@ -78,7 +78,7 @@ def retry_safe_setup_with_socks_proxy(agent,port)
    result = safe_setup_with_socks_proxy(agent,port)
    log "retry_safe_setup_with_socks_proxy result=#{result}"
    retrycount = 1
-   sleep = 2
+   sleep = Random.rand(2..4)
    while ((result == 0) && (retrycount < 4))
       retrycount = retrycount + 1
       sleep = sleep * 2
