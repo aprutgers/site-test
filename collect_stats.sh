@@ -54,7 +54,7 @@ echo SEARCH CLICKS: $SEARCH_CLICKS
 AD_CLICKS=`zcat -f $logfiles|strings|grep -i ADVERT_CONVERSION_TITLE| wc -l`
 echo ADVERT CLICKS: $AD_CLICKS
 
-INTERCEPTED_COUNT=`zcat -f $logfiles|strings|grep -i intercepted|wc -l`
+INTERCEPTED_COUNT=`zcat -f $logfiles|strings|grep -v get_consent_button|grep -i intercepted|wc -l`
 echo "INTERCEPTED: $INTERCEPTED_COUNT (notice: all ad links are tried intercepted is most from titleClk and bodyClk)"
 
 AD_CLICK_COUNT_OK=`zcat -f $logfiles|strings|grep ADVERT_CONVERSION_TITLE|cut -d: -f 1,3,5| \
@@ -90,8 +90,11 @@ echo "NETWORK_ERRORS: $NETWORK_ERRORS"
 TIMEOUT_ERRORS=`zcat -f $logfiles -f|strings|grep -i Net::ReadTimeout|wc -l`
 echo "TIMEOUT_ERRORS: $TIMEOUT_ERRORS (Net::ReadTimeout)"
 
-DOCKER_ERRORS=`zcat -f $logfiles -f|strings|grep -i "Errno::ECONNREFUSED"|wc -l`
-echo "DOCKER_ERRORS: $DOCKER_ERRORS (Errno::ECONNREFUSED)"
+DOCKER_ERRORS=`zcat -f $logfiles -f|strings|grep -i "FAIL"|wc -l`
+echo "DOCKER_ERRORS: $DOCKER_ERRORS (FAIL)"
+
+DOCKER_ECF_ERRORS=`zcat -f $logfiles -f|strings|grep -i "Errno::ECONNREFUSED"|wc -l`
+echo "DOCKER_ECF_ERRORS: $DOCKER_ECF_ERRORS (Errno::ECONNREFUSED)"
 
 DOCKER_EOF_ERRORS=`zcat -f $logfiles -f|strings|grep -i "EOFError"|wc -l`
 echo "DOCKER_EOF_ERRORS: $DOCKER_EOF_ERRORS (EOFError)"
