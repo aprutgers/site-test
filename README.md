@@ -143,7 +143,7 @@ debug=1 causes the ruby dbg function to log.
 
 ### using ramdisk /mnt/tmp with service
 
-To reduce SSD disk ware(degradation), current logging is done in ramdisk mounted as /mnt/tmp
+To reduce SSD disk ware(degradation), current logging is done in ramdisk of 1GB (1024M) mounted as /mnt/tmp
 
 A service has been created to manage ramddisk (doesn't work on boot):
 - systemctl enable tmp-ramdisk.service
@@ -152,7 +152,7 @@ A service has been created to manage ramddisk (doesn't work on boot):
 
 Alternative just run:
 ```
-mount -t tmpfs -o size=$cap tmpfs /mnt/tmp
+mount -t tmpfs -o size=1024M tmpfs /mnt/tmp
 ```
 
 ### using external disk for docker
