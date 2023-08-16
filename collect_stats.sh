@@ -55,7 +55,7 @@ AD_CLICKS=`zcat -f $logfiles|strings|grep -i ADVERT_CONVERSION_TITLE| wc -l`
 echo ADVERT CLICKS: $AD_CLICKS
 
 INTERCEPTED_COUNT=`zcat -f $logfiles|strings|grep -v get_consent_button|grep -i intercepted|wc -l`
-echo "INTERCEPTED: $INTERCEPTED_COUNT (notice: all ad links are tried intercepted is most from titleClk and bodyClk)"
+echo "INTERCEPTED: $INTERCEPTED_COUNT"
 
 AD_CLICK_COUNT_OK=`zcat -f $logfiles|strings|grep ADVERT_CONVERSION_TITLE|cut -d: -f 1,3,5| \
 grep -v "Public Cloud News"|\
@@ -69,17 +69,15 @@ echo "AD_CLICK_OK_RATE: $OKR %"
 CTR=`echo "scale=2;100 * $AD_CLICK_COUNT_OK / $DOMAIN_PAGE_LOADS" | bc -l`
 echo "DOMAIN_CLICK_TROUGH_RATE: $CTR % (CTR)"
 
-
 # zero v.s. non zero ad links found
 AD_FOUND_COUNT=`zcat -f $logfiles|strings|grep "going to click"|wc -l`
-echo "AD_FOUND_COUNT: $AD_FOUND_COUNT"
 AD_ZERO_FOUND_COUNT=`zcat -f $logfiles|strings|grep "going to click"|grep "0 found"|wc -l`
 AD_ZERO_FOUND_PCT=`echo "scale=2;100 * $AD_ZERO_FOUND_COUNT / $AD_FOUND_COUNT" | bc -l`
-echo "AD_ZERO_FOUND_COUNT: $AD_ZERO_FOUND_COUNT ($AD_ZERO_FOUND_PCT)%"
 AD_NON_ZERO_FOUND_COUNT=`zcat -f $logfiles|strings|grep "going to click"|grep -v "0 found"|wc -l`
 AD_NON_ZERO_FOUND_PCT=`echo "scale=2;100 * $AD_NON_ZERO_FOUND_COUNT / $AD_FOUND_COUNT" | bc -l`
+echo "AD_ZERO_FOUND_COUNT: $AD_ZERO_FOUND_COUNT ($AD_ZERO_FOUND_PCT)%"
+echo "AD_FOUND_COUNT: $AD_FOUND_COUNT"
 echo "AD_NON_ZERO_FOUND_COUNT: $AD_NON_ZERO_FOUND_COUNT ($AD_NON_ZERO_FOUND_PCT%)"
-
 
 DOCKER_RUNS=`zcat -f $logfiles -f|strings|grep -i 'docker run...$'|wc -l`
 echo "DOCKER_RUNS: $DOCKER_RUNS"
@@ -93,6 +91,9 @@ echo "TIMEOUT_ERRORS: $TIMEOUT_ERRORS (Net::ReadTimeout)"
 DOCKER_ERRORS=`zcat -f $logfiles -f|strings|grep -i "FAIL"|wc -l`
 echo "DOCKER_ERRORS: $DOCKER_ERRORS (FAIL)"
 
+DOCKER_ERROR_RATE=`echo "scale=2;100 * $DOCKER_ERRORS / $DOCKER_RUNS" | bc -l`
+echo "DOCKER_ERROR_RATE: $DOCKER_ERROR_RATE %"
+
 DOCKER_ECF_ERRORS=`zcat -f $logfiles -f|strings|grep -i "Errno::ECONNREFUSED"|wc -l`
 echo "DOCKER_ECF_ERRORS: $DOCKER_ECF_ERRORS (Errno::ECONNREFUSED)"
 
@@ -105,9 +106,7 @@ echo "CHROME_DRIVER_ERRORS: $CHROME_DRIVER_ERRORS (DriverServiceSessionFactory)"
 CONNECTION_CLOSED_ERRORS=`zcat -f $logfiles -f|strings|grep -i "ERR_CONNECTION_CLOSED"|wc -l`
 echo "CONNECTION_CLOSED_ERRORS: $CONNECTION_CLOSED_ERRORS (Selenium::WebDriver::Error)"
 
-UNKOWN_EXPR="ReadTimeout|NoSuchElementError|ElementNotInteractableError|ignored|StaleElementReferenceError|intercepted|ECONNREFUSED|too many timeouts|EOFError|DriverServiceSessionFactory|DevToolsActivePort|ERR_CONNECTION_CLOSED"
-
-#UNKOWN_ERRORS=`zcat -f $logfiles -f|grep -i error|grep -v ReadTimeout|grep -v NoSuchElementError|grep -v ElementNotInteractableError|grep -v ignored|grep -v StaleElementReferenceError|grep -v intercepted|grep -v ECONNREFUSED|grep -v 'too many timeouts'|grep -v "EOFError"|grep -v "DriverServiceSessionFactory"|grep -v "DevToolsActivePort"|grep -v "ERR_CONNECTION_CLOSED"|wc -l`
+UNKOWN_EXPR="ERR_CONN|ReadTimeout|NoSuchElementError|ElementNotInteractableError|ignored|StaleElementReferenceError|intercepted|ECONNREFUSED|too many timeouts|EOFError|DriverServiceSessionFactory|DevToolsActivePort|FAIL"
 
 UNKOWN_ERRORS=`zcat -f $logfiles|grep -i error|egrep -iv "$UNKOWN_EXPR"|wc -l`
 echo "UNKNOWN_ERRORS: $UNKOWN_ERRORS"
@@ -117,8 +116,6 @@ then
    zcat -f $logfiles -f|grep -i error|egrep -iv "$UNKOWN_EXPR"
 fi
 
-DER=`echo "scale=2;100 * $DOCKER_ERRORS / $DOCKER_RUNS" | bc -l`
-echo "DOCKER_ERRATE: $DER %"
 
 # 403 errors when we are blocking ourselfs with blacklisting on nginx
 FORBIDDEN=`zcat -f $logfiles -f|strings|grep safe_get_url|grep Forbidden|wc -l`
