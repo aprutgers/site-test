@@ -50,8 +50,15 @@ sudo mkdir -p /mnt/tmp
 - countrycache - stores proxy IP -> country
 - psi - stores state of running psi tunnels
 - /mnt/tmp - ram disk, see below
+- sudo cp sitetest.service /etc/systemd/system
+- sudo systemctl enable sitetest.service
 
 ### start / stop
+
+- sudo systemctl start | stop sitetest
+
+Alternative without systemd
+
 - start with start.sh (start.sh has counter for number of runners, relates do domains, max=19)
 - stop with stop.sh
 - restart with restart.sh
@@ -147,3 +154,82 @@ Alternative just run:
 ```
 mount -t tmpfs -o size=$cap tmpfs /mnt/tmp
 ```
+
+### using external disk for docker
+
+To further reduce SSD disk degradation, the /var/lib/docker directory is symlinked to /docker which is a mountpoint to a external (serial) connected HDD
+This HDD has a partition with an ext4 file system and is mounted to /docker from /dev/sdb6 (current serial device name)
+
+#### Add to /etc/fstab
+
+```
+# added external platter spinning disk from old laptop to serial bus to host intensive i/o from docker
+/dev/sdd6              /docker                 ext4    defaults        0 0
+```
+
+Notice: sdb, sdc seem to get mapped to another usb driver due to auto power control, sdd seems one with control=on so always on
+seems timing issue what driver (1-13 is the one with control=on for power) is selected when serial device is mapped, see below TODO
+
+READ: https://www.kernel.org/doc/html/v4.13/driver-api/usb/power-management.html
+
+How to check what usb driver was used:
+
+```
+# dmesg | grep usb
+
+[182424.754786] usb 1-13: new high-speed USB device number 3 using xhci_hcd
+[182424.883381] usb 1-13: New USB device found, idVendor=174c, idProduct=1153, bcdDevice= 1.00
+[182424.883393] usb 1-13: New USB device strings: Mfr=2, Product=3, SerialNumber=1
+[182424.883398] usb 1-13: Product: USB3.0 to SATA adapter
+[182424.883402] usb 1-13: Manufacturer: GODO
+[182424.883406] usb 1-13: SerialNumber: 201510000058
+```
+
+the usb 1-13 prefix indicates the driver being used and corresponds with the subdir in the `/sys/bus/usb/devices` dir.
+
+```
+# cd /sys/bus/usb/devices
+# ls
+
+..
+1-13  
+1-13:1.0 
+..
+
+cd 1-13
+ls /sys/bus/usb/devices/1-13/power
+
+/sys/bus/usb/devices/1-13/power/control -> on
+```
+
+the value on means the usb port won't power down.
+
+for more read: https://www.kernel.org/doc/html/v4.13/driver-api/usb/power-management.html
+
+```
+# lsusb -vv
+```
+
+shows more details on each usb device
+
+##### Formatting
+only small recovery partion6 was used (20GB) for now
+```
+# mkfs -t ext4 /dev/sdd6
+```
+
+##### Symlink (/var/lib/docker -> /docker)
+````
+systemctl stop docker
+cd /var/lib
+mv docker docker-
+ln -s /docker .
+````
+
+##### Mounting
+````
+mount /dev/sdb6 /docker
+````
+
+##### TODO / check / improve
+After machine reboot /dev/sdb6 needs to exist (consistent) and file system should be okay (docker: Error response from daemon: layer does not exist.)
