@@ -38,14 +38,16 @@ After git clone run:
 ./install.sh
 ```
 
-### required cache / operational directories
+### required domain config / cache / operational directories
 
 ```
+tar xvf domainsconfig.tar
 mkdir countrycache
 mkdir psi
 sudo mkdir -p /mnt/tmp
 ```
-- countrycache - stores proxy IP country
+- domainsconfig.tar -  ctr, agents, articles, delay, minmax, search, sites config files per domain
+- countrycache - stores proxy IP -> country
 - psi - stores state of running psi tunnels
 - /mnt/tmp - ram disk, see below
 
