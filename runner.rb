@@ -65,9 +65,9 @@ def safe_setup_with_socks_proxy(agent,port)
       result=1
    rescue => e
      result=0
-     dbg "safe_setup_with_socks_proxy: an error of type #{e.class} happened, message is #{e.message}"
+     log "safe_setup_with_socks_proxy: an error of type #{e.class} happened, message is #{e.message}"
    ensure
-     dbg "safe_setup_with_socks_proxy: ensure"
+     log "safe_setup_with_socks_proxy: ensure"
    end
    log "safe_setup_with_socks_proxy return result=#{result}"
    return result
@@ -79,7 +79,7 @@ def retry_safe_setup_with_socks_proxy(agent,port)
    log "retry_safe_setup_with_socks_proxy result=#{result}"
    retrycount = 1
    sleep = 2
-   while ((result == 0) && (retrycount < 3))
+   while ((result == 0) && (retrycount < 4))
       retrycount = retrycount + 1
       sleep = sleep * 2
       log "retry_safe_setup_with_socks_proxy: sleep #{sleep} seconds"
