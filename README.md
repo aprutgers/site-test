@@ -108,38 +108,38 @@ which is read by the sitetest.py script to provide data to the statistics web pa
 The Linux crontab has entries for logging and docker prune maintenance as well as emailing daily stats.
 Also the crontab has an entry to collect the statistics each 15 minutes for the web version.
 
-### analyser runs
-Analyser runs make a ctr for a instance==30
-```
-./ana-runner.sh
-```
-
 ### domains configuration file
 
 Example:
 
 ```
-hyperscalercloud.online:,1,
-hyperscalercloud.nl:,2,
-hypercloudzone.com:,3,
-infonu.nl:,4,
-pubcloudnews.tech:,5,
-pubcloudnews.tech:,30,
-hypercloudhub.nl:
-
+hyperscalercloud.nl:,1,2,3,12,16,
+hypercloudzone.com:,4,5,6,13,17,
+infonu.nl:,7,11,14,22,
+pubcloudnews.tech:,8,9,10,15,18,
+hyperscalercloud.online:,19,20,21,
+hypercloudhub.nl:,99,
+hypercloudzone.com:,30,
+hyperscalercloud.nl:,99,
 ```
+
 A line must start with the domain, then a : and then a , and also end on , for grep to work to distinct 1 and 10, 2 30 and so on
 The analyser run is integrated in runner.rb with if-then code on instance number, currently instance==30 is the analyser run.
 
 ### analyser run
+Analyser runs make a ctr for a instance==30
 
 ```
 ./ana_runner.sh
 ```
 
-This will run a seperate process and uses instance=20 to seperate it from the running processes.
-The runner.rb code has if-then-else code on instane=20 to run in analyse mode which is always triggering a click.
+This will run a seperate process and uses instance=30 to seperate it from the running processes.
+The runner.rb code has if-then-else code on instane=30 to run in analyse mode which is always triggering a click.
 Analyser runs can fail, like no working psiphon tunnel, just re-run.
+
+### debug 
+You can increase logging by changing the value of debug=0 to `debug=1` in the `test.sh` file.
+debug=1 causes the ruby dbg function to log.
 
 ### using ramdisk /mnt/tmp with service
 
