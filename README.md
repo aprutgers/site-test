@@ -179,8 +179,10 @@ ln -s /mnt/tmp/docker .
 As a 3GB ramdisk causes more ram usage, swapping increases in the SSD, hence the swappiness config value is tuned full down:
 
 ```
-sudo sysctl vm.swappiness=0
+sudo sysctl vm.swappiness=10
 ```
+
+When tuned down to 0, OOM errors start to occur.
 
 You can monitor actual swapping via:
 
@@ -190,10 +192,23 @@ vmstat 3
 
 See also https://www.howtogeek.com/449691/what-is-swapiness-on-linux-and-how-to-change-it/
 
+### Using external serial disk for swap space
+
+Using mkswap and swapon and swapoff the swap space has been reconfigured to reduce SSD wear.
+
+```
+mkswap /dev/sdb6
+swapon /dev/sdb6 --priority 2
+swapoff swapoff /dev/dm-1
+```
+
+
 ### ALT: using external serial disk for docker - how to (not active for now)
 
-To further reduce SSD disk degradation, the /var/lib/docker directory is symlinked to /docker which is a mountpoint to a external (serial) connected HDD
+An alternative to SSD disk degradation, the /var/lib/docker directory is symlinked to /docker which is a mountpoint to a external (serial) connected HDD
 This HDD has a partition with an ext4 file system and is mounted to /docker from /dev/sdb6 (current serial device name)
+This alternative has a small disadvantage over using a ramdisk as the i/o speed of the HDD/serial causes some i/o waiting hence delay.
+This delay causes some containers to fail connecting, so reduced traffic is tested.
 
 #### Add to /etc/fstab
 
