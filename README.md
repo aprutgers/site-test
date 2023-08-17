@@ -141,6 +141,12 @@ Analyser runs can fail, like no working psiphon tunnel, just re-run.
 You can increase logging by changing the value of debug=0 to `debug=1` in the `test.sh` file.
 debug=1 causes the ruby dbg function to log.
 
+### detect
+This is a folder a bit of code to create a detection page which can detect (via javascript) if a page is browsed by a 'headless' browser.
+Sitetest does not trigger this detection.
+
+## Storage | Disks
+
 ### using ramdisk /mnt/tmp with service
 
 To reduce SSD disk ware(degradation), current logging is done in ramdisk of 1GB (1024M) mounted as /mnt/tmp
