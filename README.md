@@ -145,23 +145,31 @@ debug=1 causes the ruby dbg function to log.
 This is a folder a bit of code to create a detection page which can detect (via javascript) if a page is browsed by a 'headless' browser.
 Sitetest does not trigger this detection.
 
-## Storage | Disks
+## Storage | Ramdisk | Serial HDD
 
 ### using ramdisk /mnt/tmp with service
 
-To reduce SSD disk ware(degradation), current logging is done in ramdisk of 1GB (1024M) mounted as /mnt/tmp
+To reduce internal SSD disk ware(degradation), active logging and /var/lib/docker storage is done in a ramdisk of 3GB (3072MB) mounted as /mnt/tmp
 
-A service has been created to manage ramddisk (doesn't work on boot):
+A service has been created to manage ramddisk and works after the se linux was disabled (getenforce shows Disabled)
 - systemctl enable tmp-ramdisk.service
 - systemctl start tmp-ramdisk.service
 - systemctl status tmp-ramdisk.service
 
 Alternative just run:
 ```
-mount -t tmpfs -o size=1024M tmpfs /mnt/tmp
+mount -t tmpfs -o size=3072M tmpfs /mnt/tmp
+mkdir /mnt/tmp/docker
 ```
 
-### using external disk for docker
+To further reduce SSD disk degradation, the /var/lib/docker directory is symlinked to /mnt/tmp/docker which is a ramdisk
+```
+cd /var/lib
+mv docker docker-
+ln -s /mnt/tmp/docker .
+```
+
+### ALT: using external serial disk for docker - how to (not active for now)
 
 To further reduce SSD disk degradation, the /var/lib/docker directory is symlinked to /docker which is a mountpoint to a external (serial) connected HDD
 This HDD has a partition with an ext4 file system and is mounted to /docker from /dev/sdb6 (current serial device name)
