@@ -1,5 +1,5 @@
 #!/bin/sh
-cap=3072M
+cap=
 echo creating $cap ramdisk for /mnt/tmp
 if [ ! -d /mnt/tmp ]
 then
