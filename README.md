@@ -174,6 +174,16 @@ mv docker docker-
 ln -s /mnt/tmp/docker .
 ```
 
+#### swappiness
+
+As a 3GB ramdisk causes more ram usage, swapping increases in the SSD, hence the swappiness config value is tuned down:
+
+```
+sudo sysctl vm.swappiness=5
+```
+
+See also https://www.howtogeek.com/449691/what-is-swapiness-on-linux-and-how-to-change-it/
+
 ### ALT: using external serial disk for docker - how to (not active for now)
 
 To further reduce SSD disk degradation, the /var/lib/docker directory is symlinked to /docker which is a mountpoint to a external (serial) connected HDD
