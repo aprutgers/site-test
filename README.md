@@ -79,7 +79,7 @@ $ cat pubcloudnews.tech/minmax
 ```
 This configuration means:
 - minimal wait time of 20 seconds assigned when the delay counter drops below step size (5)
-- maximal wait time of 200 seconds assinged when the delay coounter drops below the mininal wait time (20)
+- maximal wait time of 200 seconds assinged when the delay couunter drops below the mininal wait time (20)
 - step size of 5 seconds of decreasing minimal and maximal wait time when chance occurs
 - 800/1000 (80%) chance of a decrease between runs
 
