@@ -154,16 +154,21 @@ Sitetest does not trigger this detection.
 
 ### using ramdisk /mnt/tmp with service
 
-To reduce internal SSD disk ware(degradation), active logging and /var/lib/docker storage is done in a ramdisk of 3GB (3072MB) mounted as /mnt/tmp
+To reduce internal SSD disk ware(degradation), active logging and /var/lib/docker storage is done in a ramdisk of 2.5GB (2560MB) 
+mounted as /mnt/tmp
 
-A service has been created to manage ramddisk and works after the se linux was disabled (getenforce shows Disabled)
+The tmp-ramdisk.service script has to be installed into /usr/lib/systemd/system/tmp-ramdisk.service
+Notice it still refers to a /root/make-tmp-ramdisk.sh script (could be changed into /home/ec2-user/site-test/make-tmp-ramdisk.sh)
+The script worked only after the se linux was disabled (getenforce shows Disabled)
+
+Control commands:
 - systemctl enable tmp-ramdisk.service
 - systemctl start tmp-ramdisk.service
 - systemctl status tmp-ramdisk.service
 
 Alternative just run:
 ```
-mount -t tmpfs -o size=3072M tmpfs /mnt/tmp
+mount -t tmpfs -o size=2560M tmpfs /mnt/tmp
 mkdir /mnt/tmp/docker
 ```
 
@@ -176,7 +181,8 @@ ln -s /mnt/tmp/docker .
 
 #### swappiness
 
-As a 3GB ramdisk causes more ram usage, swapping increases in the SSD, hence the swappiness config value is tuned full down:
+As a 2.5GB ramdisk causes more ram usage, swapping increases on the SSD, raising temprature and wear level, hence the 
+swappiness config value is tuned full down:
 
 ```
 sudo sysctl vm.swappiness=10
@@ -202,6 +208,12 @@ swapon /dev/sdb6 --priority 2
 swapoff swapoff /dev/dm-1
 ```
 
+A permanent config is created by adding the swap space to /etc/fstab as follows:
+
+```
+# external connected HDD disk to serial bus to take over swap from SSD - slows down system overall
+/dev/sdb6                none                   swap    defaults        0 0
+```
 
 ### ALT: using external serial disk for docker - how to (not active for now)
 
