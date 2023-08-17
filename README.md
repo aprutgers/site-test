@@ -176,10 +176,16 @@ ln -s /mnt/tmp/docker .
 
 #### swappiness
 
-As a 3GB ramdisk causes more ram usage, swapping increases in the SSD, hence the swappiness config value is tuned down:
+As a 3GB ramdisk causes more ram usage, swapping increases in the SSD, hence the swappiness config value is tuned full down:
 
 ```
-sudo sysctl vm.swappiness=5
+sudo sysctl vm.swappiness=0
+```
+
+You can monitor actual swapping via:
+
+```
+vmstat 3
 ```
 
 See also https://www.howtogeek.com/449691/what-is-swapiness-on-linux-and-how-to-change-it/
