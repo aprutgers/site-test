@@ -99,7 +99,7 @@ alias vlog='tail -f /mnt/tmp/test-runner-instance*.log'
 ### statistics
 You can collect statistics on the site-test processes using the CLI `./collect_stats.sh`
 
-A web verstion is also available as http://192.168.178.91/sitetest.html
+A web verstion is also available as http://192.168.2.15/sitetest.html
 The web version is calling sitetest.php, then sitetest.sh and finally sitetest.py.
 For this purpose the `collect_stats.sh` script is run in cron and output is saved in `collect_stats.txt` 
 which is read by the sitetest.py script to provide data to the statistics web page.
