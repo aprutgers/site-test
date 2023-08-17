@@ -99,10 +99,13 @@ alias vlog='tail -f /mnt/tmp/test-runner-instance*.log'
 ### statistics
 You can collect statistics on the site-test processes using the CLI `./collect_stats.sh`
 
-Also a web verstion is also available as http://192.168.178.91/sitetest.html
+A web verstion is also available as http://192.168.178.91/sitetest.html
 The web version is calling sitetest.php, then sitetest.sh and finally sitetest.py.
 For this purpose the `collect_stats.sh` script is run in cron and output is saved in `collect_stats.txt` 
 which is read by the sitetest.py script to provide data to the statistics web page.
+
+For history tracking purposes a cron scheduled script called `store-stats-update.sh` stores an end-of-day snapshot
+of the collected statistics as ./stats/stats.YYYYMMD, this directory isn't cleaned.
 
 ### crontab 
 The Linux crontab has entries for logging and docker prune maintenance as well as emailing daily stats.
