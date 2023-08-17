@@ -59,7 +59,7 @@ sudo mkdir -p /mnt/tmp
 
 Alternative without systemd
 
-- start with start.sh (start.sh has counter for number of runners, relates do domains, max=19)
+- start with start.sh (start.sh has counter for number of runners, relates do domains, current max=29)
 - stop with stop.sh
 - restart with restart.sh
 
@@ -244,6 +244,3 @@ ln -s /docker .
 ````
 mount /dev/sdb6 /docker
 ````
-
-##### TODO / check / improve
-After machine reboot /dev/sdb6 needs to exist (consistent) and file system should be okay (docker: Error response from daemon: layer does not exist.)
