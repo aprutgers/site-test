@@ -94,7 +94,7 @@ docker run -e SCREEN_WIDTH=$w -e SCREEN_HEIGHT=$h \
    --add-host=host.docker.internal:host-gateway \
    -p $port:4444 \
    -v $chromedir:$chromedir \
-   --shm-size="1g" \
+   --shm-size="750m" \
    selenium/standalone-chrome:latest
 echo "`date`: sleep $dsleep for docker to become active"
 sleep $dsleep
