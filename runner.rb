@@ -10,7 +10,7 @@ $country  = ""
 $vrecurse = 0
 $ctr      = 10 # safe default
 $debug    = 1  # default
-$free_mem = 750
+$free_mem = 512 # sharp edge before trashing
 
 def log(str)
   ts=Time.now
