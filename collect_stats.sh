@@ -91,7 +91,10 @@ echo "TIMEOUT_ERRORS: $TIMEOUT_ERRORS (Net::ReadTimeout)"
 DOCKER_ERRORS=`zcat -f $logfiles -f|strings|grep -i "FAIL"|wc -l`
 echo "DOCKER_ERRORS: $DOCKER_ERRORS (FAIL)"
 
-DOCKER_ERROR_RATE=`echo "scale=2;100 * $DOCKER_ERRORS / $DOCKER_RUNS" | bc -l`
+DOCKER_MEM_BAIL=`zcat -f $logfiles -f|strings|grep -i "MEMORY BAIL"|wc -l`
+echo "DOCKER_MEM_BAIL: $DOCKER_MEM_BAIL"
+
+DOCKER_ERROR_RATE=`echo "scale=2;100 * ( $DOCKER_ERRORS + $DOCKER_MEM_BAIL) / $DOCKER_RUNS" | bc -l`
 echo "DOCKER_ERROR_RATE: $DOCKER_ERROR_RATE %"
 
 DOCKER_ECF_ERRORS=`zcat -f $logfiles -f|strings|grep -i "Errno::ECONNREFUSED"|wc -l`
@@ -100,16 +103,13 @@ echo "DOCKER_ECF_ERRORS: $DOCKER_ECF_ERRORS (Errno::ECONNREFUSED)"
 DOCKER_EOF_ERRORS=`zcat -f $logfiles -f|strings|grep -i "EOFError"|wc -l`
 echo "DOCKER_EOF_ERRORS: $DOCKER_EOF_ERRORS (EOFError)"
 
-DOCKER_FAIL_LOAD_SPIKE=`zcat -f $logfiles -f|strings|grep -i "FAIL DUE TO LOAD SPIKE"|wc -l`
-echo "DOCKER_FAIL_LOAD_SPIKE: $DOCKER_FAIL_LOAD_SPIKE"
-
 CHROME_DRIVER_ERRORS=`zcat -f $logfiles -f|strings|egrep -i "DriverServiceSessionFactory|DevToolsActivePort"|wc -l`
 echo "CHROME_DRIVER_ERRORS: $CHROME_DRIVER_ERRORS (DriverServiceSessionFactory)"
 
 CONNECTION_CLOSED_ERRORS=`zcat -f $logfiles -f|strings|grep -i "ERR_CONNECTION_CLOSED"|wc -l`
 echo "CONNECTION_CLOSED_ERRORS: $CONNECTION_CLOSED_ERRORS (Selenium::WebDriver::Error)"
 
-UNKOWN_EXPR="ERR_CONN|ReadTimeout|NoSuchElementError|ElementNotInteractableError|ignored|StaleElementReferenceError|intercepted|ECONNREFUSED|too many timeouts|EOFError|DriverServiceSessionFactory|DevToolsActivePort|FAIL"
+UNKOWN_EXPR="ERR_CONN|ReadTimeout|NoSuchElementError|ElementNotInteractableError|ignored|StaleElementReferenceError|intercepted|ECONNREFUSED|too many timeouts|EOFError|DriverServiceSessionFactory|DevToolsActivePort|FAIL|MEMORY BAIL"
 
 UNKOWN_ERRORS=`zcat -f $logfiles|grep -i error|egrep -iv "$UNKOWN_EXPR"|wc -l`
 echo "UNKNOWN_ERRORS: $UNKOWN_ERRORS"

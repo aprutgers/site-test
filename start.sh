@@ -1,8 +1,7 @@
 #!/bin/sh
 cd /home/ec2-user/site-test
 clients=22
-# higher interval as we use HDD as swap disk, prevent load spike, and slower start
-interval=20
+interval=3
 echo start with interval $sleep seconds $clients test runner instances ...
 c=1
 while [ $c -le $clients ]
