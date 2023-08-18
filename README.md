@@ -292,3 +292,12 @@ ln -s /docker .
 ````
 mount /dev/sdb6 /docker
 ````
+
+## Free more memory
+To prevent more swapping Gnome has been stopped, but not disabled
+
+```
+systemctl gdm stop
+```
+
+In case of system hang, reboots none ssh login we may need Gnome login prompt via console
