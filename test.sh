@@ -13,13 +13,13 @@ debug=0
 
 if [ -z "$instance" ]
 then
-  echo "usage: $0 <instance>"
+  echo "`date`: usage: $0 <instance>"
   exit 1
 fi
 
 if ! [[ $instance =~ [1-9] ]]
 then
-   echo "instance should be between 1-20"
+   echo "`date`: instance should be between 1-20"
    exit 2
 fi
 
@@ -65,7 +65,7 @@ chmod -R 777 $chromedir
 domain=`grep ,$instance, domains|awk -F: '{ print $1 }'`
 if [ -z "$domain" ]
 then
-   echo "FATAL: no domain configured for instance $instance - bailing after 10 seconds"
+   echo "`date`: FATAL: no domain configured for instance $instance - bailing after 10 seconds"
    sleep 10
    exit
 fi
@@ -87,14 +87,14 @@ dims=`./getscreendims.sh`
 w=`echo $dims|cut -d, -f1`
 h=`echo $dims|cut -d, -f2`
 echo "`date`: browser dimensions $w,$h"
-echo docker run...
+echo "`date`: docker run..."
 docker run -e SCREEN_WIDTH=$w -e SCREEN_HEIGHT=$h \
    --name $name \
    -d \
    --add-host=host.docker.internal:host-gateway \
    -p $port:4444 \
    -v $chromedir:$chromedir \
-   --shm-size="750m" \
+   --shm-size="512m" \
    selenium/standalone-chrome:latest
 echo "`date`: sleep $dsleep for docker to become active"
 sleep $dsleep

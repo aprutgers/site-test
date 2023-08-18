@@ -100,6 +100,9 @@ echo "DOCKER_ECF_ERRORS: $DOCKER_ECF_ERRORS (Errno::ECONNREFUSED)"
 DOCKER_EOF_ERRORS=`zcat -f $logfiles -f|strings|grep -i "EOFError"|wc -l`
 echo "DOCKER_EOF_ERRORS: $DOCKER_EOF_ERRORS (EOFError)"
 
+DOCKER_FAIL_LOAD_SPIKE=`zcat -f $logfiles -f|strings|grep -i "FAIL DUE TO LOAD SPIKE"|wc -l`
+echo "DOCKER_FAIL_LOAD_SPIKE: $DOCKER_FAIL_LOAD_SPIKE"
+
 CHROME_DRIVER_ERRORS=`zcat -f $logfiles -f|strings|egrep -i "DriverServiceSessionFactory|DevToolsActivePort"|wc -l`
 echo "CHROME_DRIVER_ERRORS: $CHROME_DRIVER_ERRORS (DriverServiceSessionFactory)"
 

@@ -10,6 +10,7 @@ $country  = ""
 $vrecurse = 0
 $ctr      = 10 # safe default
 $debug    = 1  # default
+$free_mem = 750
 
 def log(str)
   ts=Time.now
@@ -26,6 +27,16 @@ def dbg(str)
 end
 
 def randomsleep(func, min, max)
+
+   # memory trashing protection
+   f = IO.popen("free -m|grep Mem|awk '{ print $4 }'")
+   free = f.readlines[0].strip().to_i
+   log "free memory: #{free} MB"
+   if (free < $free_mem)
+      log "MEMORY BAIL due to low memory mark free mem: #{free} < mark: #{$free_mem}"
+      exit(1)
+   end
+
    sleep = Random.rand(min...max)
    if ($instance.to_i == 30) 
       sleep=5
@@ -33,6 +44,7 @@ def randomsleep(func, min, max)
    log "#{func}: sleep #{sleep} seconds"
    sleep sleep
    dbg "#{func}: sleep done."
+
 end
 
 def setup_with_socks_proxy(agent,port)
@@ -265,10 +277,10 @@ def get_location_pubcloudnews
      if (rand <= 100)
         url="https://#{$domain}?src=" + get_push_method
      end
-     if (rand > 100 and rand <= 500)
+     if (rand > 100 and rand <= 200)
         url="https://#{$domain}/" + get_random_page
      end
-     if (rand > 500)
+     if (rand > 200)
         url="https://#{$domain}/" + get_random_article
      end
      safe_get_url(url)
