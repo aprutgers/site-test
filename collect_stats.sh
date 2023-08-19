@@ -75,8 +75,8 @@ AD_ZERO_FOUND_COUNT=`zcat -f $logfiles|strings|grep "going to click"|grep "0 fou
 AD_ZERO_FOUND_PCT=`echo "scale=2;100 * $AD_ZERO_FOUND_COUNT / $AD_FOUND_COUNT" | bc -l`
 AD_NON_ZERO_FOUND_COUNT=`zcat -f $logfiles|strings|grep "going to click"|grep -v "0 found"|wc -l`
 AD_NON_ZERO_FOUND_PCT=`echo "scale=2;100 * $AD_NON_ZERO_FOUND_COUNT / $AD_FOUND_COUNT" | bc -l`
-echo "AD_ZERO_FOUND_COUNT: $AD_ZERO_FOUND_COUNT ($AD_ZERO_FOUND_PCT)%"
 echo "AD_FOUND_COUNT: $AD_FOUND_COUNT"
+echo "AD_ZERO_FOUND_COUNT: $AD_ZERO_FOUND_COUNT ($AD_ZERO_FOUND_PCT)%"
 echo "AD_NON_ZERO_FOUND_COUNT: $AD_NON_ZERO_FOUND_COUNT ($AD_NON_ZERO_FOUND_PCT%)"
 
 DOCKER_RUNS=`zcat -f $logfiles -f|strings|grep -i 'docker run...$'|wc -l`
