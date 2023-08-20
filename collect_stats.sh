@@ -125,15 +125,15 @@ FORBIDDEN=`zcat -f $logfiles -f|strings|grep safe_get_url|grep Forbidden|wc -l`
 echo "FORBIDDEN: $FORBIDDEN"
 zcat -f $logfiles -f|strings|grep safe_get_url|grep Forbidden
 
-# extra analytics data for local hardware
+# extra analytics data for internal SSD drive
 if [ "$hostname" == "centos9server" ]
 then
+   device=`smartctl --scan|grep scsi | awk '{ print $1 }'`
    # SSD status
-   SSD_WEAR_LEVEL_COUNT=`sudo smartctl  /dev/sda -ia|grep "Wear_Leveling_Count"|awk '{ print $4}'`
+   SSD_WEAR_LEVEL_COUNT=`sudo smartctl  $device  -ia|grep "Wear_Leveling_Count"|awk '{ print $4}'`
    echo "SSD_WEAR_LEVEL: $SSD_WEAR_LEVEL_COUNT (084p)"
-   SSD_TEMP=`sudo smartctl  /dev/sda -ia|grep "Temperature_Celsius"|awk '{ print $4}'`
+   SSD_TEMP=`sudo smartctl  $device -ia|grep "Temperature_Celsius"|awk '{ print $4}'`
    echo "SSD_TEMP: $SSD_TEMP"
-
    # MNT-TMP used/free space
    MNT_TMP_USED=`df /mnt/tmp|grep -v Use|awk '{ print $5 }'`
    echo "MNT_TMP_USED: $MNT_TMP_USED"
