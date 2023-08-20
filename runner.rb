@@ -10,7 +10,7 @@ $country  = ""
 $vrecurse = 0
 $ctr      = 10 # safe default
 $debug    = 1  # default
-$free_mem = 192
+$free_mem = 256
 
 def log(str)
   ts=Time.now
@@ -31,6 +31,7 @@ def randomsleep(func, min, max)
    # memory trashing protection
    f = IO.popen("free -m|grep Mem|awk '{ print $4 }'")
    free = f.readlines[0].strip().to_i
+   f.close()
    log "free memory: #{free} MB"
    if (free < $free_mem)
       log "MEMORY BAIL due to low memory mark free mem: #{free} < mark: #{$free_mem}"

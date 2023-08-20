@@ -128,7 +128,7 @@ zcat -f $logfiles -f|strings|grep safe_get_url|grep Forbidden
 # extra analytics data for internal SSD drive
 if [ "$hostname" == "centos9server" ]
 then
-   device=`smartctl --scan|grep scsi | awk '{ print $1 }'`
+   device=`sudo smartctl --scan|grep scsi | awk '{ print $1 }'`
    # SSD status
    SSD_WEAR_LEVEL_COUNT=`sudo smartctl  $device  -ia|grep "Wear_Leveling_Count"|awk '{ print $4}'`
    echo "SSD_WEAR_LEVEL: $SSD_WEAR_LEVEL_COUNT (084p)"
