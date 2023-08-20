@@ -74,10 +74,6 @@ fi
 
 safe_stop_docker $name
 
-#echo start the waiter...
-ruby waiter.rb $instance $domain
-#echo waiter done.
-
 echo "`date`: starting new test run with single docker thread instance=$instance domain=$domain country=$country name=$name port=$port proxy=$proxy"
 
 # SIZES info sample
