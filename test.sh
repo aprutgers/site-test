@@ -9,7 +9,7 @@ proxy="http://host.docker.internal:${proxyport}"
 name="run$port"
 country=""
 active="true"
-debug=0
+debug=1
 
 if [ -z "$instance" ]
 then
@@ -90,7 +90,8 @@ docker run -e SCREEN_WIDTH=$w -e SCREEN_HEIGHT=$h \
    --add-host=host.docker.internal:host-gateway \
    -p $port:4444 \
    -v $chromedir:$chromedir \
-   --shm-size="512m" \
+   --shm-size="256m" \
+   -m "1g" \
    selenium/standalone-chrome:latest
 echo "`date`: sleep $dsleep for docker to become active"
 sleep $dsleep

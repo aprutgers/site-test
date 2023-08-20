@@ -10,7 +10,8 @@ $country  = ""
 $vrecurse = 0
 $ctr      = 10 # safe default
 $debug    = 1  # default
-$free_mem = 256
+$free_mem = 256 # treshold for candidate left from total free memory
+$used_mem = 800 # treshold for candidate used memory
 
 def log(str)
   ts=Time.now
@@ -25,27 +26,36 @@ def dbg(str)
      STDOUT.flush
   end
 end
-
-def randomsleep(func, min, max)
-
-   # memory trashing protection
-   f = IO.popen("free -m|grep Mem|awk '{ print $4 }'")
+def mem_check() 
+   cmd="free -m|grep Mem|awk '{ print $4 }'"
+   f = IO.popen(cmd)
    free = f.readlines[0].strip().to_i
    f.close()
    log "free memory: #{free} MB"
-   if (free < $free_mem)
-      log "MEMORY BAIL due to low memory mark free mem: #{free} < mark: #{$free_mem}"
-      exit(1)
+   cid = "run50" + sprintf("%02d",$instance)
+   cmd = "docker stats #{cid} --no-stream|grep -v CONTAINER|awk '{ print $4 }'|cut -d. -f1"
+   log "cid: #{cid}"
+   f = IO.popen(cmd)
+   data = f.readlines[0]
+   if (data)
+      used = data.strip().to_i
+      log "container used memory: #{used} MB"
+      if ((free < $free_mem) && (used > $used_mem))
+         log "MEMORY BAIL free #{free} < mark: #{$free_mem} and container used #{used} > #{$used_mem}"
+         exit(1)
+      end
    end
+end
 
-   sleep = Random.rand(min...max)
+def randomsleep(func, min, max)
+   mem_check()
+   sleep = Random.rand(min...max) - 1
    if ($instance.to_i == 30) 
       sleep=5
    end
    log "#{func}: sleep #{sleep} seconds"
    sleep sleep
    dbg "#{func}: sleep done."
-
 end
 
 def setup_with_socks_proxy(agent,port)
