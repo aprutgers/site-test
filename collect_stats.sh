@@ -79,6 +79,9 @@ echo "AD_FOUND_COUNT: $AD_FOUND_COUNT"
 echo "AD_ZERO_FOUND_COUNT: $AD_ZERO_FOUND_COUNT ($AD_ZERO_FOUND_PCT)%"
 echo "AD_NON_ZERO_FOUND_COUNT: $AD_NON_ZERO_FOUND_COUNT ($AD_NON_ZERO_FOUND_PCT%)"
 
+WORDPRESS_DB_ERR=`zcat -f $logfiles -f|strings|grep -i "title=Database Error"|wc -l`
+echo "WORDPRESS_DB_ERR: $WORDPRESS_DB_ERR"
+
 DOCKER_RUNS=`zcat -f $logfiles -f|strings|grep -i 'docker run...$'|wc -l`
 echo "DOCKER_RUNS: $DOCKER_RUNS"
 
@@ -93,6 +96,12 @@ echo "DOCKER_ERRORS: $DOCKER_ERRORS (FAIL)"
 
 DOCKER_MEM_BAIL=`zcat -f $logfiles -f|strings|grep -i "MEMORY BAIL"|wc -l`
 echo "DOCKER_MEM_BAIL: $DOCKER_MEM_BAIL"
+
+# indirect errors from chrome driverr related to memory shortages/slow swap issues
+MEM_ERRORS="page crash|invalid session id|cannot determine loading status|not connected to DevTools|Unable to receive message from renderer|title=Database Error"
+
+CHROME_MEM_ERRORS=`zcat -f $logfiles -f|strings|egrep -i "$MEM_ERRORS"|wc -l`
+echo "CHROME_MEM_ERRORS: $CHROME_MEM_ERRORS (memory/swap related)"
 
 DOCKER_ERROR_RATE=`echo "scale=2;100 * ( $DOCKER_ERRORS + $DOCKER_MEM_BAIL) / $DOCKER_RUNS" | bc -l`
 echo "DOCKER_ERROR_RATE: $DOCKER_ERROR_RATE %"
@@ -109,7 +118,7 @@ echo "CHROME_DRIVER_ERRORS: $CHROME_DRIVER_ERRORS (DriverServiceSessionFactory)"
 CONNECTION_CLOSED_ERRORS=`zcat -f $logfiles -f|strings|grep -i "ERR_CONNECTION_CLOSED"|wc -l`
 echo "CONNECTION_CLOSED_ERRORS: $CONNECTION_CLOSED_ERRORS (Selenium::WebDriver::Error)"
 
-UNKOWN_EXPR="ERR_CONN|ReadTimeout|NoSuchElementError|ElementNotInteractableError|ignored|StaleElementReferenceError|intercepted|ECONNREFUSED|too many timeouts|EOFError|DriverServiceSessionFactory|DevToolsActivePort|FAIL|MEMORY BAIL"
+UNKOWN_EXPR="ERR_CONN|ReadTimeout|NoSuchElementError|ElementNotInteractableError|ignored|StaleElementReferenceError|intercepted|ECONNREFUSED|too many timeouts|EOFError|DriverServiceSessionFactory|DevToolsActivePort|FAIL|MEMORY BAIL|$MEM_ERRORS"
 
 UNKOWN_ERRORS=`zcat -f $logfiles|grep -i error|egrep -iv "$UNKOWN_EXPR"|wc -l`
 echo "UNKNOWN_ERRORS: $UNKOWN_ERRORS"

@@ -10,7 +10,7 @@ $country  = ""
 $vrecurse = 0
 $ctr      = 10 # safe default
 $debug    = 1  # default
-$free_mem = 256 # treshold for candidate left from total free memory
+$free_mem = 750 # treshold for candidate left from total free memory
 $used_mem = 800 # treshold for candidate used memory
 
 def log(str)

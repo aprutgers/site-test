@@ -9,7 +9,7 @@ proxy="http://host.docker.internal:${proxyport}"
 name="run$port"
 country=""
 active="true"
-debug=1
+debug=0
 
 if [ -z "$instance" ]
 then

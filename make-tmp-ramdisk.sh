@@ -6,5 +6,9 @@ then
    mkdir /mnt/tmp
 fi
 mount -t tmpfs -o size=$cap tmpfs /mnt/tmp
+# targets from symlinks from /var/lib and /run
 mkdir /mnt/tmp/docker
+mkdir /mnt/tmp/run
+mkdir /mnt/tmp/run/docker
+mkdir /mnt/tmp/run/containerd
 echo done.
