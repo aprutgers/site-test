@@ -170,4 +170,20 @@ Alternative just run:
 ```
 mount -t tmpfs -o size=2560M tmpfs /mnt/tmp
 mkdir /mnt/tmp/docker
+mkdir /mnt/tmp/run
+mkdir /mnt/tmp/run/docker
+mkdir /mnt/tmp/run/containerd
 ```
+
+### Additional Symlinks
+
+These are added as well, could make not a lot of diff as /run is also ramdisk
+
+```
+[root@centos9server lib]# ls -ld /run/docker
+lrwxrwxrwx 1 root root 19 Aug 21 15:13 /run/docker -> /mnt/tmp/run/docker
+[root@centos9server lib]# ls -ld /run/containerd
+lrwxrwxrwx 1 root root 23 Aug 21 15:13 /run/containerd -> /mnt/tmp/run/containerd
+```
+
+to change need to stop docker and containterd
