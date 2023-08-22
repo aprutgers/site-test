@@ -49,8 +49,8 @@ def mem_check()
 end
 
 def randomsleep(func, min, max)
-   mem_check()
-   sleep = Random.rand(min...max) - 1
+   #mem_check()
+   sleep = Random.rand(min...max)
    if ($instance.to_i == 30) 
       sleep=5
    end
@@ -72,7 +72,7 @@ def setup_with_socks_proxy(agent,port)
   url = "http://0.0.0.0:" + port + "/wd/hub"
   options = Selenium::WebDriver::Chrome::Options.new
   options.add_argument '--proxy-server=' + proxy
-  options.add_argument 'user-data-dir=/mnt/tmp/chrome' + $instance
+  options.add_argument 'user-data-dir=/nvme/tmp/chrome' + $instance
   #DO NOT USE HEADLESS OPTION
   options.add_option(:detach, true)
   options.add_option(:accept_insecure_certs, true)
