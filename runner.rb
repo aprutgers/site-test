@@ -37,6 +37,7 @@ def mem_check()
    log "cid: #{cid}"
    f = IO.popen(cmd)
    data = f.readlines[0]
+   f.close()
    if (data)
       used = data.strip().to_i
       log "container used memory: #{used} MB"
