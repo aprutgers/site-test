@@ -56,7 +56,7 @@ else
 fi
 
 #echo "create ramdisk storage for chrome session to reduce SSD writes/wear"
-chromedir="/mnt/tmp/chrome${instance}"
+chromedir="/nvme/tmp/chrome${instance}"
 sudo rm -rf $chromedir
 mkdir $chromedir
 chmod -R 777 $chromedir

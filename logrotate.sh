@@ -14,10 +14,10 @@ do
       echo "$rfile.gz exists no rotation needed"
    else
       echo rotating $file...
-      cp "/mnt/tmp/$file" "$rfile"
+      cp "/nvme/tmp/$file" "$rfile"
       gzip $rfile
       # truncate
-      cp /dev/null "/mnt/tmp/$file"
+      cp /dev/null "/nvme/tmp/$file"
       echo rotating done.
    fi
 done
