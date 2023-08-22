@@ -88,12 +88,12 @@ The ruby module that implements this algorithem is implemented in `waiter.rb` wh
 
 ### logging
 
-Logging is sent and rotated to [/mnt]/tmp - see ramdisk below.
+Logging is sent and rotated to [/nvme]/tmp - see NVME storage below.
 Each runner instance has a seperate log file called `test-runner-instanceN.log` where N is the instance number.
 An alias is available in the deployment account called `vlog` that does a tail -f for all thise log files at once:
 
 ```
-alias vlog='tail -f /mnt/tmp/test-runner-instance*.log'
+alias vlog='tail -f /nvme/tmp/test-runner-instance*.log'
 ```
 
 ### statistics
@@ -150,40 +150,58 @@ debug=1 causes the ruby dbg function to log.
 This is a folder a bit of code to create a detection page which can detect (via javascript) if a page is browsed by a 'headless' browser.
 Sitetest does not trigger this detection.
 
-## Storage | Ramdisk | Serial HDD
+## NVME Storage 
+The mini-pc has a Samsung 980 - M.2 Interne SSD - NVME - 250GB card installed and is presented as /dev/nvme0n1 device.
+The /dev/nvme0n1 device is used to handle high traffic I/O (including swap) which wears the internal SSD disk.
 
-### using ramdisk /mnt/tmp with service
-
-To reduce internal SSD disk ware(degradation), active logging and /var/lib/docker storage is done in a ramdisk of 2.5GB (2560MB) 
-mounted as /mnt/tmp
-
-The tmp-ramdisk.service script has to be installed into /usr/lib/systemd/system/tmp-ramdisk.service
-Notice it still refers to a /root/make-tmp-ramdisk.sh script (could be changed into /home/ec2-user/site-test/make-tmp-ramdisk.sh)
-The script worked only after the se linux was disabled (getenforce shows Disabled)
-
-Control commands:
-- systemctl enable tmp-ramdisk.service
-- systemctl start tmp-ramdisk.service
-- systemctl status tmp-ramdisk.service
-
-Alternative just run:
-```
-mount -t tmpfs -o size=2560M tmpfs /mnt/tmp
-mkdir /mnt/tmp/docker
-mkdir /mnt/tmp/run
-mkdir /mnt/tmp/run/docker
-mkdir /mnt/tmp/run/containerd
-```
-
-### Additional Symlinks
-
-These are added as well, could make not a lot of diff as /run is also ramdisk
+These entries are added to fstab:
 
 ```
-[root@centos9server lib]# ls -ld /run/docker
-lrwxrwxrwx 1 root root 19 Aug 21 15:13 /run/docker -> /mnt/tmp/run/docker
-[root@centos9server lib]# ls -ld /run/containerd
-lrwxrwxrwx 1 root root 23 Aug 21 15:13 /run/containerd -> /mnt/tmp/run/containerd
+/dev/nvme0n1p1          none                    swap    defaults        0 0
+/dev/nvme0n1p2          /nvme                   ext4    defaults        0 0
 ```
 
-to change need to stop docker and containterd
+The lsbk shows this setup:
+
+```
+[root@centos9server tmp]# lsblk
+NAME        MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
+sda           8:0    0 238.5G  0 disk
+├─sda1        8:1    0   600M  0 part /boot/efi
+├─sda2        8:2    0     1G  0 part /boot
+└─sda3        8:3    0 236.9G  0 part
+  ├─cs-root 253:0    0    70G  0 lvm  /
+  ├─cs-swap 253:1    0   7.8G  0 lvm
+  └─cs-home 253:2    0 159.1G  0 lvm  /home
+nvme0n1     259:0    0 232.9G  0 disk
+├─nvme0n1p1 259:1    0    40G  0 part [SWAP]
+└─nvme0n1p2 259:2    0 192.9G  0 part /nvme
+```
+
+### directories / symlinks
+
+Layout of /nvme is as follows:
+
+```
+[ec2-user@centos9server site-test]$ ls -l /nvme/
+total 24
+drwx--x--- 12 root root  4096 Aug 22 15:18 docker
+drwx------  2 root root 16384 Aug 22 15:01 lost+found
+drwxrwxrwx 25 root root  4096 Aug 22 15:47 tmp
+```
+
+The setup is done like this:
+
+```
+mkdir /nvme/tmp
+chmod 777 /nvme/tmp
+```
+
+To reduce more writes to the docker container (lots of /tmp writes) /var/lib/docker has been symlinked to /nvme/docker
+
+```
+mkdir /nvme/docker
+cd /var/lib
+/bin/rm -rf docker # rebuilds
+ln -s /nvme/docker .
+```
