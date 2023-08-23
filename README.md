@@ -205,3 +205,20 @@ cd /var/lib
 /bin/rm -rf docker # rebuilds
 ln -s /nvme/docker .
 ```
+
+## Manage CPU Temp
+Due to cont'd high processing the system can run warm/hot with CPU temps max of 84 Celsius.
+
+To reduce temprature peaks the CPU frequency can be tuned down with the CLI cpupower
+
+```
+cpupower frequency-set --max 2000m
+```
+
+You can check the current setting with
+```
+cpupower frequency-info
+cpupower monitor
+```
+
+See also man (1) cpupower, cpupower-set(1), cpupower-info(1), cpupower-idle-info(1),  cpupower-idle-set(1),  cpupower-frequency-set(1),  cpupower-frequency-info(1), cpupower-monitor(1), powertop(1)
