@@ -8,8 +8,9 @@ proxyport=$(( 8080 + $instance))
 proxy="http://host.docker.internal:${proxyport}"
 name="run$port"
 country=""
-active="true"
 debug=0
+SHM_SIZE="2G"
+DCK_SIZE="3g"
 
 if [ -z "$instance" ]
 then
@@ -28,11 +29,8 @@ safe_stop_docker() {
    id=`docker ps -a|grep $name|awk '{print $1}'`
    if [ ! -z "$id" ]
    then
-      #echo "docker kill $name - $id"
       docker kill $id
       docker rm $id
-   #else
-      #echo "docker $name not running"
    fi
 }
 
@@ -62,7 +60,7 @@ mkdir $chromedir
 chmod -R 777 $chromedir
 #echo "create ramdisk $chromedir done."
 
-domain=`grep ,$instance, domains|awk -F: '{ print $1 }'`
+domain=`grep ,$instance, /home/ec2-user/site-test/domains|awk -F: '{ print $1 }'`
 if [ -z "$domain" ]
 then
    echo "`date`: FATAL: no domain configured for instance $instance - bailing after 10 seconds"
@@ -74,24 +72,23 @@ fi
 
 safe_stop_docker $name
 
-echo "`date`: starting new test run with single docker thread instance=$instance domain=$domain country=$country name=$name port=$port proxy=$proxy"
 
-# SIZES info sample
-# docker run -d -e SCREEN_WIDTH=1366 -e SCREEN_HEIGHT=768 -e SCREEN_DEPTH=24 -e SCREEN_DPI=74
-#selenium/standalone-chrome:4.2.2-20220609
 dims=`./getscreendims.sh`
 w=`echo $dims|cut -d, -f1`
 h=`echo $dims|cut -d, -f2`
 echo "`date`: browser dimensions $w,$h"
-echo "`date`: docker run..."
+
+echo "`date`: starting new test run with single docker thread instance=$instance domain=$domain country=$country name=$name port=$port proxy=$proxy"
+
+echo "`date`: docker run $name SHM_SIZE=$SHM_SIZE DCK_SIZE=$DCK_SIZE"
 docker run -e SCREEN_WIDTH=$w -e SCREEN_HEIGHT=$h \
    --name $name \
    -d \
    --add-host=host.docker.internal:host-gateway \
    -p $port:4444 \
    -v $chromedir:$chromedir \
-   --shm-size="256m" \
-   -m "1g" \
+   --shm-size="$SHM_SIZE" \
+   -m "$DCK_SIZE" \
    selenium/standalone-chrome:latest
 echo "`date`: sleep $dsleep for docker to become active"
 sleep $dsleep

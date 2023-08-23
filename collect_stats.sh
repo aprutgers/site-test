@@ -3,10 +3,10 @@ hostname=`hostname`
 date=`date`
 if [ "$1" == "full" ]
 then
-   logfiles='/mnt/tmp/test-runner-instance*.log* /tmp/rotated/*'
+   logfiles='/nvme/tmp/test-runner-instance*.log* /tmp/rotated/*'
    mode='FULL'
 else
-   logfiles='/mnt/tmp/test-runner-instance*.log*'
+   logfiles='/nvme/tmp/test-runner-instance*.log*'
    mode='DAY'
 fi
 if [ "$1" == "history" ]
@@ -145,9 +145,11 @@ then
    echo "SSD_WEAR_LEVEL: $SSD_WEAR_LEVEL_COUNT (084p)"
    SSD_TEMP=`sudo smartctl  $device -ia|grep "Temperature_Celsius"|awk '{ print $4}'`
    echo "SSD_TEMP: $SSD_TEMP"
-   # MNT-TMP used/free space
-   MNT_TMP_USED=`df /mnt/tmp|grep -v Use|awk '{ print $5 }'`
-   echo "MNT_TMP_USED: $MNT_TMP_USED"
+   #NVME-TMP used/free space
+   NVME_TMP_USED=`df /nvme/tmp|grep -v Use|awk '{ print $5 }'`
+   echo "NVME_TMP_USED: $NVME_TMP_USED"
+   echo "NVME_TEMPS:"
+   sudo smartctl -a /dev/nvme0n1| grep "Temperature:"
 fi
 
 # Failing PSI proxies
