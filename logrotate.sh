@@ -1,5 +1,5 @@
 #!/bin/sh
-cd /mnt/tmp
+cd /nvme/tmp
 logfiles=`ls -1 test-runner-instance*.log`
 cd /tmp
 ts=`date +%Y%m%d`

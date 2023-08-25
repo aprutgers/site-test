@@ -88,7 +88,7 @@ echo "NETWORK_ERRORS: $NETWORK_ERRORS"
 TIMEOUT_ERRORS=`zcat -f $logfiles -f|strings|grep -i Net::ReadTimeout|wc -l`
 echo "TIMEOUT_ERRORS: $TIMEOUT_ERRORS (Net::ReadTimeout)"
 
-DOCKER_RUNS=`zcat -f $logfiles -f|strings|grep -i 'docker run...$'|wc -l`
+DOCKER_RUNS=`zcat -f $logfiles -f|strings|grep -i 'docker run'|wc -l`
 echo "DOCKER_RUNS: $DOCKER_RUNS"
 
 LOST_CONTAINERS=`zcat -f $logfiles -f|strings|egrep -i "Cannot kill container| No such container"|wc -l`
@@ -121,6 +121,15 @@ echo "CHROME_DRIVER_ERRORS: $CHROME_DRIVER_ERRORS (DriverServiceSessionFactory)"
 CONNECTION_CLOSED_ERRORS=`zcat -f $logfiles -f|strings|grep -i "ERR_CONNECTION_CLOSED"|wc -l`
 echo "CONNECTION_CLOSED_ERRORS: $CONNECTION_CLOSED_ERRORS (Selenium::WebDriver::Error)"
 
+# Failing PSI proxies
+PSI_PROXYFAIL=`zcat -f $logfiles -f|strings|grep "proxy not working ok" |wc -l`
+echo "PSI_PROXYFAIL: $PSI_PROXYFAIL"
+
+# 403 errors when we are blocking ourselfs with blacklisting on nginx
+HTTP_FORBIDDEN=`zcat -f $logfiles -f|strings|grep safe_get_url|grep Forbidden|wc -l`
+echo "HTTP_FORBIDDEN: $HTTP_FORBIDDEN"
+zcat -f $logfiles -f|strings|grep safe_get_url|grep Forbidden
+
 UNKOWN_EXPR="ERR_CONN|ReadTimeout|NoSuchElementError|ElementNotInteractableError|ignored|StaleElementReferenceError|intercepted|ECONNREFUSED|too many timeouts|EOFError|DriverServiceSessionFactory|DevToolsActivePort|FAIL|MEMORY BAIL|$MEM_ERRORS|Cannot kill container|No such container"
 
 UNKOWN_ERRORS=`zcat -f $logfiles|grep -i error|egrep -iv "$UNKOWN_EXPR"|wc -l`
@@ -131,30 +140,22 @@ then
    zcat -f $logfiles -f|grep -i error|egrep -iv "$UNKOWN_EXPR"
 fi
 
-# 403 errors when we are blocking ourselfs with blacklisting on nginx
-FORBIDDEN=`zcat -f $logfiles -f|strings|grep safe_get_url|grep Forbidden|wc -l`
-echo "FORBIDDEN: $FORBIDDEN"
-zcat -f $logfiles -f|strings|grep safe_get_url|grep Forbidden
-
-# extra analytics data for internal SSD drive
+# extra analytics data for CPU core, NVME and SSD drive
 if [ "$hostname" == "centos9server" ]
 then
-   device=`sudo smartctl --scan|grep scsi | awk '{ print $1 }'`
-   # SSD status
-   SSD_WEAR_LEVEL_COUNT=`sudo smartctl  $device  -ia|grep "Wear_Leveling_Count"|awk '{ print $4}'`
-   echo "SSD_WEAR_LEVEL: $SSD_WEAR_LEVEL_COUNT (084p)"
-   SSD_TEMP=`sudo smartctl  $device -ia|grep "Temperature_Celsius"|awk '{ print $4}'`
+   CPU_CORE_TEMP=`sensors -u|grep -A 1 'Package id 0'|tail -1|awk '{ print $2 }'`
+   echo "CPU_CORE_TEMP: $CPU_CORE_TEMP"
+   CPU_FREQ=`sudo cpupower monitor|head -3|tail -1|cut -d'|' -f9`
+   echo "CPU_FREQ: $CPU_FREQ (MHz)"
+   SSD_WEAR_LEVEL_COUNT=`sudo smartctl /dev/sda  -ia|grep "Wear_Leveling_Count"|awk '{ print $4}'`
+   echo "SSD_WEAR_LEVEL: $SSD_WEAR_LEVEL_COUNT"
+   SSD_TEMP=`sudo smartctl /dev/sda -ia|grep "Temperature_Celsius"|awk '{ print $4}'`
    echo "SSD_TEMP: $SSD_TEMP"
-   #NVME-TMP used/free space
    NVME_TMP_USED=`df /nvme/tmp|grep -v Use|awk '{ print $5 }'`
    echo "NVME_TMP_USED: $NVME_TMP_USED"
-   echo "NVME_TEMPS:"
-   sudo smartctl -a /dev/nvme0n1| grep "Temperature:"
+   NVME_TEMP=`sudo smartctl -a /dev/nvme0n1| grep "Temperature:"|awk '{ print $2}'`
+   echo "NVME_TEMP: $NVME_TEMP"
 fi
-
-# Failing PSI proxies
-PROXYFAIL=`zcat -f $logfiles -f|strings|grep "proxy not working ok" |wc -l`
-echo "PROXYFAIL: $PROXYFAIL"
 
 MAX=20
 

@@ -15,7 +15,7 @@ stop_proxy () {
    fi
 }
 proxywait=5
-proxylog="/tmp/test${instance}-psiphon.log"
+proxylog="/nvme/tmp/test${instance}-psiphon.log"
 drd="-dataRootDirectory /home/ec2-user/site-test/psi/${instance}"
 lif="-listenInterface docker0"
 psicmd="/home/ec2-user/psiphon.client.free/psiphon-tunnel-core-x86_64 $drd $lif"
