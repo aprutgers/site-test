@@ -22,10 +22,10 @@ header {
 }
 nav {
   float: left;
-  width: 16%;
+  width: 14%;
   text-align: left;
   background: #ccc;
-  padding: 10px;
+  padding: 3px;
 }
 article {
   float: left;
@@ -74,6 +74,7 @@ function getDomains() {
         domains = getLabels(data);
      }); // end get
      jQuery.ajaxSetup({async:true});
+     console.log('domains: ' + domains)
      return domains;
 }
 
@@ -151,6 +152,7 @@ Site Test Stats
   <nav><div id="card-3"></div></nav>
   <nav><div id="card-4"></div></nav>
   <nav><div id="card-5"></div></nav>
+  <nav><div id="card-6"></div></nav>
   <hr/>
 </section>
 <section>
