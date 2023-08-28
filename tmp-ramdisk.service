@@ -1,9 +1,0 @@
-[Unit]
-Description = Create ramdisk for /mnt/tmp
-After = network.target
-
-[Service]
-ExecStart = /home/ec2-user/site-test/make-tmp-ramdisk.sh
-
-[Install]
-WantedBy = multi-user.target
