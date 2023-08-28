@@ -1,6 +1,6 @@
 import sys
-import subprocess
 import argparse
+import log
 
 g_debug = 0
 
@@ -45,46 +45,46 @@ def get_stats_card(part):
 
 # create domain card and print as json
 def get_domain_card(domain):
-   json = '{\n'
    df="/home/ec2-user/site-test/"+domain+"/delay"
    f = open(df, "r")
    mindelay=f.readline().strip()
    maxdelay=f.readline().strip()
    f.close()
+   df="/home/ec2-user/site-test/"+domain+"/minmax"
+   f = open(df, "r")
+   minwait=f.readline().strip()
+   maxwait=f.readline().strip()
+   stepsz=f.readline().strip()
+   chance=f.readline().strip()
+   f.close()
    df="/home/ec2-user/site-test/"+domain+"/ctr"
    f = open(df, "r")
    ctr=f.readline().strip()
    f.close()
-   pageviews=0
-   pacepct=0
-   df="/home/ec2-user/site-test/collect_stats.txt"
-   f = open(df, "r")
-   for line in f:
-      if (domain in line): 
-         # example return data infonu.nl: 3175 (39.45%)
-         line=line.strip()
-         pageviews=line.split(":")[1].split(' ')[1]
-         pagepct=line.split(":")[1].split(' ')[2]
-         pagepct=pagepct.replace('(','')
-         pagepct=pagepct.replace(')','')
-         break;
-   f.close()
-
-   json = json + (' "%s" : "%s..%ss" '%('min/max-delay',mindelay,maxdelay))+",\n"
+   json = '{\n'
+   json = json + (' "%s" : "%s..%ss" '%('minmax',minwait,maxwait))+",\n"
+   json = json + (' "%s" : "%s..%ss" '%('runval',mindelay,maxdelay))+",\n"
    json = json + (' "%s" : "%s%s" '%('site-ctr',int(ctr)/10,'%'))# +",\n"
    json = json + '\n}'
-
    return json
 
 def update_ctr(domain,ctr):
+   if (not ctr.isnumeric()):
+      print("ERROR: ctr value '%s' is not numeric"%(ctr))
+      return 'ERROR not numeric'
+   if (int(ctr)>100): # >10% CTR is too high
+      print("ERROR: ctr value '%s' is too high!!"%(ctr))
+      return 'ERROR value too high'
    try:
       df="/home/ec2-user/site-test/"+domain+"/ctr"
       f = open(df, "w")
       f.write(ctr+"\n")
       f.close()
-      print('updated ctr value for domain='+domain+' to value=' + ctr)
+      log.logdebug('updated ctr value for domain='+domain+' to value=' + ctr)
+      return 'UPDATED OK'
    except Exception as err:
-      print(err)
+      log.logerror(err)
+      return err
 
 def main():
    d_domain='all'
@@ -118,4 +118,32 @@ def main():
    if (action=='put'):
       update_ctr(domain,ctr)
 
-main()
+def webmain(p_action,p_domain,p_part,p_ctr,p_debug):
+   d_domain='all'
+   d_action='get'
+   d_debug=0
+   d_part='1'
+   d_ctr='5'
+
+   action = d_action if p_action is None else p_action
+   domain = d_domain if p_domain is None else p_domain
+   part   = d_part   if p_part   is None else p_part
+   ctr    = d_ctr    if p_ctr    is None else p_ctr
+   g_debug= p_debug
+
+   if (action=='get'):
+      if (domain=='all'):
+         log.logdebug("return domains")
+         return get_domains()
+      else:
+         log.logdebug("print_domain_card domain="+domain)
+         if (domain=='stats'):
+            return get_stats_card(part)
+         else: 
+            return get_domain_card(domain)
+   if (action=='put'):
+      return update_ctr(domain,ctr)
+   return('unknown action')
+
+if __name__ == "__main__":
+    main()

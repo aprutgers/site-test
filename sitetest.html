@@ -67,7 +67,7 @@ function getLabels(myText) {
    return labels;
 }
 function getDomains() {
-     url="sitetest.php?action=get";
+     url="/sitetestweb?action=get";
      jQuery.ajaxSetup({async:false});
      domains = [];
      $.get( url, function( data ) {
@@ -105,7 +105,7 @@ function createTable(domain,card) {
    return $table;
 }
 function renderCard(card,domain,part) {
-     url="sitetest.php?action=get&domain="+domain+"&part="+part
+     url="/sitetestweb?action=get&domain="+domain+"&part="+part
      console.log('renderCard card='+card+' domain='+domain+' part='+part)
      $.get( url, function( data ) {
       console.log('DATA: card='+card+' domain='+domain+' part='+part)
@@ -130,9 +130,15 @@ function updatectr(e,domain) {
    ctr = ctr.replace("%", "");
    ctr = 10 * parseFloat(ctr)
    res = $.ajax({
-        url: 'sitetest.php?action=put&part=0',
+        url: '/sitetestweb?action=put&part=0',
         type: "GET",
-        data: { domain: domain, ctr: ctr}
+        data: { domain: domain, ctr: ctr},
+        success: function(result) {
+            console.log('result: ' , result)
+	    if (result != "UPDATED OK") {
+	       alert(result)
+	    }
+        },
    });
    e.disabled=true
 }
