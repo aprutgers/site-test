@@ -10,3 +10,6 @@ hyperscalercloud.online/
 infonu.nl/
 mijnenergierekeninglager.nl/
 pubcloudnews.tech/
+env
+ __pycache__
+python.sock
