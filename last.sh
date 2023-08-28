@@ -1,4 +1,4 @@
-logfiles='/tmp/test-runner-instance*.log* /tmp/rotated/*'
+logfiles='/nvme/tmp/test-runner-instance*.log* /tmp/rotated/*'
 MAX=${1-25}
 echo ""
 echo "LATEST ADVERT_CLICK RESULTS($MAX):"
