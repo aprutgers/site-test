@@ -15,7 +15,6 @@ def do_sitetest():
       debug  = request.args.get('debug')
       status = sitetest.webmain(action, domain,part,ctr,debug)
       return status,"200"
-
    except Exception as err:
       log.logerror(f"main:Exception {err=}, {type(err)=}")
       log.logerror(traceback.format_exc())
