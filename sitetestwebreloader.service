@@ -1,0 +1,9 @@
+[Unit]
+Description=Auto Reload Python Nginx/WSGI on change python code for dev
+
+[Service]
+ExecStart=/root/sitetestWebDevReloader.sh
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

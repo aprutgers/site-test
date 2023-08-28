@@ -1,0 +1,13 @@
+[Unit]
+Description=uWSGI instance to serve sonos web app
+After=network.target
+
+[Service]
+User=ec2-user
+Group=nginx
+WorkingDirectory=/home/ec2-user/site-test
+Environment="PATH=/home/ec2-user/site-test/env/bin"
+ExecStart=/home/ec2-user/site-test/env/bin/uwsgi --ini wsgi.ini
+
+[Install]
+WantedBy=multi-user.target
