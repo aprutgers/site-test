@@ -27,17 +27,8 @@ def sleep_current_min_max_delay
   delay = IO.readlines("#{$domain}/delay")
   min=delay[0].to_i
   max=delay[1].to_i
-  if (min == 0)
-     min = 1
-  end
-  if (max == 0)
-     max = 2
-  end
-  if (min == max) 
-     max = min + 1
-  end
-  sleep = Random.rand(min...max)
-  dbg "sleep_current_min_max_delay: current min=#{min} current max=#{max}"
+  sleep = min + Random.rand(0...max)
+  log "sleep_current_min_max_delay: current min=#{min} current max=#{max}"
   log "sleep_current_min_max_delay: #{sleep} seconds"
   sleep sleep
   log "sleep_current_min_max_delay: done."
