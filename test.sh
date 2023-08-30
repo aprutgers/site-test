@@ -8,7 +8,7 @@ proxyport=$(( 8080 + $instance))
 proxy="http://host.docker.internal:${proxyport}"
 name="run$port"
 country=""
-debug=0
+debug=1
 SHM_SIZE="2G"
 DCK_SIZE="3g"
 
