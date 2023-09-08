@@ -2,7 +2,7 @@
 Description=Auto Reload Python Nginx/WSGI on change python code for dev
 
 [Service]
-ExecStart=/root/sitetestWebDevReloader.sh
+ExecStart=/home/ec2-user/site-test/sitetestWebDevReloader.sh
 Restart=on-failure
 
 [Install]
