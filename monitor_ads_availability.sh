@@ -17,9 +17,9 @@ do
    else
       echo "`date`: INFO: NO Target Ads Found on $domain" 
    fi
+   /bin/rm -f $LOG $BODY
+   echo "`date`: checking domain $domain done."
    sleep=$((RANDOM % 30))
    echo "`date`: sleep $sleep"
    sleep $sleep
-   echo "`date`: checking domain $domain done."
-   /bin/rm -f $LOG $BODY
 done
