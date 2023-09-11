@@ -9,9 +9,21 @@ def get_domains():
     f = open(df, "r")
     domains=''
     for line in f:
-       domains = domains + line.split(':')[0] + "\n"
+       domain = line.split(':')[0]
+       if not domain in domains: #unique
+          domains = domains + domain + "\n"
     f.close()
     return domains
+
+def get_runner_count(domain):
+    df="/home/ec2-user/site-test/domains"
+    f = open(df, "r")
+    count=0
+    for line in f:
+       if (line.split(':')[0] == domain):
+          count=line.split(':')[1].count(',')-1
+    f.close()
+    return count
 
 def split_list(a_list):
     half = len(a_list)//2
@@ -61,10 +73,12 @@ def get_domain_card(domain):
    f = open(df, "r")
    ctr=f.readline().strip()
    f.close()
+   runners = get_runner_count(domain)
    json = '{\n'
    json = json + (' "%s" : "%s..%ss" '%('minmax',minwait,maxwait))+",\n"
    json = json + (' "%s" : "%s..%ss" '%('runval',mindelay,maxdelay))+",\n"
-   json = json + (' "%s" : "%s%s" '%('site-ctr',int(ctr)/10,'%'))# +",\n"
+   json = json + (' "%s" : "%s" '%('runners',runners))+",\n"
+   json = json + (' "%s" : "%s%s" '%('site-ctr',int(ctr)/10,'%')) # no comma for last line
    json = json + '\n}'
    return json
 

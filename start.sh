@@ -1,6 +1,6 @@
 #!/bin/sh
 cd /home/ec2-user/site-test
-clients=22 # seems to be max w/ 16 GB RAM and not too much swapping on mini-pc
+clients=0 # service disabled till start october 2023
 interval=0 # can be small as process starts with a waiter
 echo start with interval $sleep seconds $clients test runner instances ...
 c=1
