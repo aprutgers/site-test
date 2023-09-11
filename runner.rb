@@ -477,7 +477,8 @@ def checker
      $adjusted_ctr = 1.5 * $ctr
      log "checker: #{len} adverts on page, increase ctr from #{$ctr} to #{$adjusted_ctr}"
   end
-  if ((rand < $adjusted_ctr) or ($instance.to_i == 30)) #CTR minus errors
+  # TODO: change value 9999 back to value 30 (ana_runner instance id) when ads are found again
+  if ((rand < $adjusted_ctr) or ($instance.to_i == 9999)) #CTR minus errors
      dbg "checker: rand=#{rand} < ctr=#{$adjusted_ctr} instance=#{$instance}"
      # Multiple attempts to click, stops when it succeeds as it navigates away...
      log "checker: going to click #{len} found targets"
