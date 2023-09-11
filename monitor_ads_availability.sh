@@ -1,5 +1,5 @@
 #!/bin/sh
-DOMAINS=`cat /home/ec2-user/site-test/domains|grep -v ,30,|egrep -v ":$"|awk -F: '{ print $1}'`
+DOMAINS=`shuf /home/ec2-user/site-test/domains|grep -v ,30,|egrep -v ":$"|awk -F: '{ print $1}'`
 BODY=/tmp/ana-runner-body.txt
 LOG=/tmp/ana-runner.log
 cd /home/ec2-user/site-test
@@ -17,6 +17,9 @@ do
    else
       echo "`date`: INFO: NO Target Ads Found on $domain" 
    fi
+   sleep=$((RANDOM % 30))
+   echo "`date`: sleep $sleep"
+   sleep $sleep
    echo "`date`: checking domain $domain done."
    /bin/rm -f $LOG $BODY
 done
