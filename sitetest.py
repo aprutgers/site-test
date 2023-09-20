@@ -22,8 +22,8 @@ def get_runner_count(domain):
     for line in f:
        if (line.split(':')[0] == domain):
           count=line.split(':')[1].count(',')-1
-    f.close()
-    return count
+          f.close()
+          return count
 
 def split_list(a_list):
     half = len(a_list)//2
