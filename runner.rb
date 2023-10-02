@@ -473,12 +473,12 @@ def checker
   rand=Random.rand(1...1000)
   # increase chance on a click when there are actual ads
   $adjusted_ctr = $ctr
-  if (len > 0)
-     $adjusted_ctr = 1.5 * $ctr
+  if ((len > 0) && ($domain != "infonu.nl"))
+     $adjusted_ctr = 1.3 * $ctr
      log "checker: #{len} adverts on page, increase ctr from #{$ctr} to #{$adjusted_ctr}"
   end
   # TODO: change value 9999 back to value 30 (ana_runner instance id) when ads are found again
-  if ((rand < $adjusted_ctr) or ($instance.to_i == 9999)) #CTR minus errors
+  if ((rand < $adjusted_ctr) or ($instance.to_i == 30)) #CTR minus errors
      dbg "checker: rand=#{rand} < ctr=#{$adjusted_ctr} instance=#{$instance}"
      # Multiple attempts to click, stops when it succeeds as it navigates away...
      log "checker: going to click #{len} found targets"

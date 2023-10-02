@@ -1,6 +1,6 @@
 #!/bin/sh
 cd /home/ec2-user/site-test
-clients=6 # slow starting 17/9
+clients=23 # slow starting 17/9
 echo start with interval $sleep seconds $clients test runner instances ...
 c=1
 while [ $c -le $clients ]

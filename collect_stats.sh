@@ -130,7 +130,7 @@ HTTP_FORBIDDEN=`zcat -f $logfiles -f|strings|grep safe_get_url|grep Forbidden|wc
 echo "HTTP_FORBIDDEN: $HTTP_FORBIDDEN"
 zcat -f $logfiles -f|strings|grep safe_get_url|grep Forbidden
 
-UNKOWN_EXPR="ERR_CONN|ReadTimeout|NoSuchElementError|ElementNotInteractableError|ignored|StaleElementReferenceError|intercepted|ECONNREFUSED|too many timeouts|EOFError|DriverServiceSessionFactory|DevToolsActivePort|FAIL|MEMORY BAIL|$MEM_ERRORS|Cannot kill container|No such container"
+UNKOWN_EXPR="ERR_CONN|ReadTimeout|NoSuchElementError|ElementNotInteractableError|ignored|StaleElementReferenceError|intercepted|ECONNREFUSED|too many timeouts|EOFError|DriverServiceSessionFactory|DevToolsActivePort|FAIL|MEMORY BAIL|$MEM_ERRORS|Cannot kill container|No such container|Azure error"
 
 UNKOWN_ERRORS=`zcat -f $logfiles|grep -i error|egrep -iv "$UNKOWN_EXPR"|wc -l`
 echo "UNKNOWN_ERRORS: $UNKOWN_ERRORS"
