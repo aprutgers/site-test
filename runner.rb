@@ -369,7 +369,7 @@ def do_safe_click(b1)
    begin
       name=b1.text()
       label=b1.attribute("aria-label")
-      log "do_safe_click: button: #{name}|#{label}"
+      log "do_safe_click: button: name:#{name} label:#{label}"
       click_result = b1.click()
       #click_result = @driver.execute_script("return arguments[0].click()" , b1)
       log "get_consent_button: click result:"
